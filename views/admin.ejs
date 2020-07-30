@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <%- include("partials/head") %>
+</head>
+
+<body>
+    <header>
+        <%- include("partials/header") %>
+    </header>
+
+    <br />
+    <br />
+    <div class="container">
+        <!-- Mushrooms List -->
+        <table class="table">
+            <h5><strong>Mushrooms:</strong></h5>
+            <thead class="thead-dark">
+                <tr>
+                    <th scope="col"></th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Description</th>
+                    <th scope="col">Price</th>
+                    <th scope="col">Stock</th>
+                    <th scope="col">Operations</th>
+                </tr>
+            </thead>
+            <tbody>
+            <% products.forEach(function(product){ %>
+                <tr>
+                    <th scope="row">
+                        <img src="<%= product.image_url %>" style="width: 100px; height: 65px;" alt="<%= product.item_name%>" />
+                    </th>
+                    <td><%= product.item_name%></td>
+                    <td><%= product.item_description%></td>
+                    <td><%= product.price%></td>
+                    <td><%= product.qty_available%></td>
+                    <td>
+                        <a href="/edit-item/<%= product.id %>"><button type="button" class="btn btn-sm btn-warning">Edit</button></a>
+                        <a href="/delete-item/<%= product.id %>"><button type="button" class="btn btn-sm btn-danger">
+                            Delete
+                        </button></a>
+                    </td>
+                </tr>
+            <% })%>
+            </tbody>
+        </table>
+        <a href="\create-item"><button type="button" class="btn btn-block btn-success">Create</button></a>
+        <!-- Mushrooms List Ends -->
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+        integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+        integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"
+        integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI"
+        crossorigin="anonymous"></script>
+</body>
+
+</html>

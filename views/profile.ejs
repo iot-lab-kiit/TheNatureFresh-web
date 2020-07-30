@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <%- include("partials/head") %>
+</head>
+
+<body>
+    <header>
+        <%- include("partials/header") %>
+    </header>
+    <br />
+    <br />
+    <div class="container">
+    <!--Profile-->
+    <div class="jumbotron">
+        <div class="row">
+            <img src="images/profile.webp" style="width: 150px; height: 100px;" alt="John Doe">
+            <h1 class="display-3">John Doe</h1>
+        </div>
+        <hr class="my-4">
+        <p>Joined: 29/07/2020</p>
+        <p>E-Mail: johndoe@example.com</p>
+        <label for="active-orders">Active Orders</label>
+        <div class="active-orders col-5">
+            <a href="#" class="list-group-item list-group-item-action">Order 1</a>
+            <a href="#" class="list-group-item list-group-item-action">Order 4</a>
+            <a href="#" class="list-group-item list-group-item-action">Order 5</a>
+        </div>
+        <label for="completed-orders">Completed Orders</label>
+        <div class="completed-orders col-5">
+            <a href="#" class="list-group-item list-group-item-action">Order 1</a>
+            <a href="#" class="list-group-item list-group-item-action">Order 2</a>
+            <a href="#" class="list-group-item list-group-item-action">Order 3</a>
+        </div>
+        <br />
+        <a class="btn btn-info btn-lg" href="#" role="button">Edit</a>
+        <a class="btn btn-danger btn-lg" href="#" role="button">Delete</a>
+    </div>
+    <!--Profile Ends-->
+    
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+        integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+        integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"
+        integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI"
+        crossorigin="anonymous"></script>
+</body>
+
+</html>

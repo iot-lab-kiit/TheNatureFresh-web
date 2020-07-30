@@ -1,14 +1,27 @@
 var admin = require("firebase-admin");
 var express = require("express");
 var bodyParser = require("body-parser");
-var checkIfAuthenticated = require("./checkAuthentication");
 var auth = require("./firebaseClientConfig.js");
 var session = require("express-session");
 var cookieParser = require("cookie-parser");
 var serviceAccount = require("./credentials.json");
+var axios = require('axios');
 
 var app = express();
 
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+  databaseURL: "https://thenaturemushroom.firebaseio.com",
+  storageBucket: "thenaturemushroom.appspot.com"
+});
+
+const db = admin.firestore();
+var bucket = admin.storage().bucket();
+
+
+app.use(express.static('public'));
+app.set('view engine', 'ejs');
+app.set('views', './views');
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
@@ -49,13 +62,6 @@ app.use((req, res, next) => {
   }
   next();
 });
-
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
-  databaseURL: "https://thenaturemushroom.firebaseio.com",
-});
-
-const db = admin.firestore();
 
 app.post("/create", (req, res) => {
   console.log(req.body);
@@ -115,6 +121,55 @@ app.post("/signin", async (req, res) => {
     console.error("Signin Error!");
     res.json(err);
   }
+});
+
+
+app.get("/users", (req, res) => {
+  res.render('users');
+});
+
+app.get("/admin", async (req, res) => {
+  var response = await axios.get('http://localhost:3001/api/products')
+  res.render('admin',{products:response.data});
+});
+
+app.get("/create-item", (req, res) => {
+  res.render('create_item');
+});
+
+app.get("/orders", async (req, res) => {
+  var response = await axios.get('http://localhost:3001/api/orders/')
+  console.log(response.data);
+  res.render('orders',{products:response.data});
+});
+
+
+app.post("/create-item", (req, res) => {
+  res.send(req.body);
+});
+
+app.get("/profile", (req, res) => {
+  res.render('profile');
+});
+
+app.get("/edit-user", (req, res) => {
+  res.render('edit_user');
+});
+
+app.get("/edit-item", (req, res) => {
+  res.render('edit_item');
+});
+
+app.get("/edit-order", (req, res) => {
+  res.render('edit_order');
+});
+
+app.get("/create-order", (req, res) => {
+  res.render('create_order');
+});
+
+app.get("/create-item", (req, res) => {
+  res.render('create_item');
 });
 
 app.get("/", (req, res) => {
