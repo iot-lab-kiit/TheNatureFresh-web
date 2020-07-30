@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <%- include ("partials/head.ejs") %>
+
+    <!-- <% products.forEach(function(product){%>
+        <script>
+        </script>
+        
+    <% }) %> -->
+    <script>
+        var prods = '<%- JSON.stringify(products) %>';
+        var test = JSON.parse(prods)
+
+        const cart = {
+            products:[],
+            itemCount:0
+        }
+
+
+        const addProduct = index => {
+            // console.log(test[index])
+            const i = cart.products.findIndex( item => item.id === test[index].id)
+            if(i !== -1){ //if item exists
+                cart.products[i].qty_purchased++
+                document.getElementById(index).innerHTML=cart.products[i].qty_purchased;
+            }
+            else{ //if item not exist
+                cart.products.push({
+                    ...test[index],
+                    qty_purchased:1
+                })
+                document.getElementById(index).innerHTML=1;
+            }
+            cart.itemCount++
+            console.log(cart)
+        }
+
+        const removeProduct = index => {
+            const i = cart.products.findIndex( item => item.id === test[index].id)
+            if( i === -1 ){
+                console.log('Item not in cart')
+                return
+            }
+            else if (cart.products[i].qty_purchased <= 1){
+                cart.products = cart.products.filter( item => item.id != test[index].id)
+                document.getElementById(index).innerHTML=0;
+            }
+            else {
+                cart.products[index].qty_purchased--
+                document.getElementById(index).innerHTML=cart.products[i].qty_purchased;
+            }
+            cart.itemCount--
+            console.log(cart)
+            
+        }
+    </script>
+</head>
+
+<body>
+    <header>
+        <%- include ("partials/header.ejs") %>
+    </header>
+    <br />
+    <br />
+    <div class="container">
+        <h3>Our Tasty & Healty Mushrooms</h3>
+        <hr>
+        <div class="row">
+            <% products.forEach(function(product,index){%>
+            <div class="col-lg-4">
+                <img src="<%= product.image_url %>" alt="mushroom" class="thumbnail">
+                <div class="box-element product">
+                    <h6><strong></strong><%= product.item_name%><span style="float: right;">Qty Available: <%= product.qty_available %></span></h6>
+                    <hr>
+                    <p><%= product.item_description%></p>
+                    <p>No of Item in Cart :&nbsp;<b><span id = '<%- index %>'>0</span></b></p>
+                    <button data-product=1 data-action="add" class="btn btn-outline-secondary add-btn update-cart" onclick="addProduct('<%- index %>')">Add
+                        to Cart</button>
+                    <button data-product=1 data-action="remove" class="btn  btn-outline-secondary btn-danger add-btn update-cart " onclick="removeProduct('<%- index %>'    )">Remove Cart</button>
+                    <h4 style="float: right"><strong>&#8377;<%= product.price%></strong></h4>
+                </div>
+            </div>
+            <% })%>
+        </div>
+    </div>
+    <footer>
+        <%- include ("partials/footer.ejs") %>
+    </footer>
+</body>
+
+</html>

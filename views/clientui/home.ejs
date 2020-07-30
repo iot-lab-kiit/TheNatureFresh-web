@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <%- include ("partials/head.ejs") %>
+    <script>
+        var prods = '<%- JSON.stringify(products) %>';
+        var test = JSON.parse(prods)
+
+        var cart = {
+            products:[],
+            itemCount:0
+        }
+
+
+        const addProduct = index => {
+            // console.log(test[index])
+            const i = cart.products.findIndex( item => item.id === test[index].id)
+            if(i !== -1){ //if item exists
+                cart.products[i].qty_purchased++
+                cart.products[i].qty_purchased++
+            }
+            else{ //if item not exist
+                cart.products.push({
+                    ...test[index],
+                    qty_purchased:1
+                })
+            }
+            cart.itemCount++
+            console.log(cart)
+        }
+
+        const removeProduct = index => {
+            const i = cart.products.findIndex( item => item.id === test[index].id)
+            if( i === -1 ){
+                console.log('Item not in cart')
+                return
+            }
+            else if (cart.products[i].qty_purchased <= 1){
+                cart.products = cart.products.filter( item => item.id != test[index].id)
+            }
+            else {
+                cart.products[index].qty_purchased--
+            }
+            cart.itemCount--
+            console.log(cart)
+        }
+    </script>
+</head>
+
+<body>
+    <header>
+        <%- include ("partials/header.ejs") %>
+    </header>
+    <br />
+    <br />
+    <div class="container">
+        <h3>Our Tasty & Healty Mushrooms</h3>
+        <hr>
+        <div class="row">
+            <% products.forEach(function(product,index){%>
+            <div class="col-lg-4">
+                <img src="<%= product.image_url %>" alt="mushroom" class="thumbnail">
+                <div class="box-element product">
+                    <h6><strong></strong><%= product.item_name%></h6>
+                    <hr>
+                    <p><%= product.item_description%></p>
+                    <p>No of Item in Cart <span id = '<%- index %>'>0</span></p>
+            </div>
+            <% })%>
+        </div>
+    </div>
+    <p>Cart</p>
+    <footer>
+        <%- include ("partials/footer.ejs") %>
+    </footer>
+</body>
+
+</html>

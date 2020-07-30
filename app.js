@@ -6,8 +6,18 @@ var session = require("express-session");
 var cookieParser = require("cookie-parser");
 var serviceAccount = require("./credentials.json");
 var axios = require('axios');
-
 var app = express();
+
+app.use(express.static('public'));
+app.set('view engine', 'ejs');
+app.set('views', './views');
+app.use(cookieParser());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
+
+////////////////////
+//FIREBASE INIT
+////////////////////
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
@@ -18,13 +28,10 @@ admin.initializeApp({
 const db = admin.firestore();
 var bucket = admin.storage().bucket();
 
+//////////////////
+//COOKIE SET
+//////////////////
 
-app.use(express.static('public'));
-app.set('view engine', 'ejs');
-app.set('views', './views');
-app.use(cookieParser());
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json());
 
 app.use(
   session({
@@ -38,6 +45,18 @@ app.use(
     },
   })
 );
+
+app.use((req, res, next) => {
+  if (req.cookies.creds && !req.session.user) {
+    res.clearCookie("creds");
+  }
+  next();
+});
+
+
+/////////////////
+//MIDDLEWARE START
+////////////////
 
 const checkAdmin = (req, res, next) => {
   if (req.session.role == "admin" && req.cookies.creds && req.session.user)
@@ -56,12 +75,9 @@ const checkLogin = (req, res, next) => {
   else res.send("not logged in");
 };
 
-app.use((req, res, next) => {
-  if (req.cookies.creds && !req.session.user) {
-    res.clearCookie("creds");
-  }
-  next();
-});
+/////////////////
+//MIDDLEWARE END
+////////////////
 
 app.post("/create", (req, res) => {
   console.log(req.body);
@@ -124,17 +140,17 @@ app.post("/signin", async (req, res) => {
 });
 
 
-app.get("/users", (req, res) => {
-  res.render('users');
-});
+/////////////////////
+//ADMIN START
+////////////////////
 
 app.get("/admin", async (req, res) => {
   var response = await axios.get('http://localhost:3001/api/products')
-  res.render('admin',{products:response.data});
+  res.render('adminui/admin',{products:response.data});
 });
 
 app.get("/create-item", (req, res) => {
-  res.render('create_item');
+  res.render('adminui/create_item');
 });
 
 app.get("/orders", async (req, res) => {
@@ -149,28 +165,63 @@ app.post("/create-item", (req, res) => {
 });
 
 app.get("/profile", (req, res) => {
-  res.render('profile');
+  res.render('adminui/profile');
 });
 
 app.get("/edit-user", (req, res) => {
-  res.render('edit_user');
+  res.render('adminui/edit_user');
 });
 
 app.get("/edit-item", (req, res) => {
-  res.render('edit_item');
+  res.render('adminui/edit_item');
 });
 
 app.get("/edit-order", (req, res) => {
-  res.render('edit_order');
+  res.render('adminui/edit_order');
 });
 
 app.get("/create-order", (req, res) => {
-  res.render('create_order');
+  res.render('adminui/create_order');
 });
 
 app.get("/create-item", (req, res) => {
-  res.render('create_item');
+  res.render('adminui/create_item');
 });
+
+app.get("/users", (req, res) => {
+  res.render('adminui/users');
+});
+
+/////////////////////
+//ADMIN END
+////////////////////
+
+
+////////////////////////
+//CLIENT START
+////////////////////////
+
+app.get("/shop", async (req, res) => {
+  var response = await axios.get('http://localhost:3001/api/products')
+  res.render('clientui/shop',{products:response.data});
+});
+
+app.get("/client-profile", (req, res) => {
+  res.render('clientui/profile');
+});
+
+app.get("/cart", (req, res) => {
+  res.render('clientui/cart');
+});
+
+app.get("/checkout", (req, res) => {
+  res.render('clientui/checkout');
+});
+
+////////////////////////
+//CLIENT END
+////////////////////////
+
 
 app.get("/", (req, res) => {
   if (req.session.user) res.send(req.session.user);

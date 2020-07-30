@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <%- include ("partials/head.ejs") %>
+</head>
+
+<body>
+    <header>
+        <%- include ("partials/header.ejs") %>
+    </header>
+    <br>
+    <br>
+    <div class="container">
+        <h3>Review Your Cart</h3>
+        <hr>
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="box-element">
+                    <a class="btn btn-outline-dark" href="/">&#x2190; Continue Shopping</a>
+                    <br>
+                    <br>
+
+                    <table class="table">
+                        <tr>
+                            <th>
+                                <h5>Items: <strong>9</strong></h5>
+                            </th>
+                            <th>
+                                <h5>Total: <strong>&#8377;90</strong></h5>
+                            </th>
+                            <th>
+                                <a style="float: right; margin: 5px;" class="btn btn-success"
+                                    href="/checkout">Checkout</a>
+                            </th>
+                        </tr>
+                    </table>
+                </div>
+
+                <br>
+
+                <div class="box-element">
+                    <div class="cart-row">
+                        <div style="flex:2"></div>
+                        <div style="flex:2"><strong>Item</strong></div>
+                        <div style="flex:1"><strong>Price</strong></div>
+                        <div style="flex:1"><strong>Quantity</strong></div>
+                        <div style="flex:1"><strong>Total</strong></div>
+                    </div>
+                    <div class="cart-row">
+                        <div style="flex:2"><img class="row-image" src="images/mushroom.jpg" /></div>
+                        <div style="flex:2">
+                            <p>mushroom</p>
+                        </div>
+                        <div style="flex:1">
+                            <p>&#8377;10</p>
+                        </div>
+                        <div style="flex:1">
+                            <p class="quantity">3</p>
+                            <div class="quantity">
+                                <img data-product=1 data-action="add" class="chg-quantity update-cart"
+                                    src="images/arrow-up.png">
+
+                                <img data-product=1 data-action="remove"
+                                    class="chg-quantity update-cart" src="images/arrow-down.png">
+                            </div>
+                        </div>
+                        <div style="flex:1">
+                            <p>&#8377;30</p>
+                        </div>
+                    </div>
+                    <div class="cart-row">
+                        <div style="flex:2"><img class="row-image" src="images/mushroom.jpg" /></div>
+                        <div style="flex:2">
+                            <p>mushroom</p>
+                        </div>
+                        <div style="flex:1">
+                            <p>&#8377;10</p>
+                        </div>
+                        <div style="flex:1">
+                            <p class="quantity">3</p>
+                            <div class="quantity">
+                                <img data-product=1 data-action="add" class="chg-quantity update-cart"
+                                    src="images/arrow-up.png">
+
+                                <img data-product=1 data-action="remove"
+                                    class="chg-quantity update-cart" src="images/arrow-down.png">
+                            </div>
+                        </div>
+                        <div style="flex:1">
+                            <p>&#8377;30</p>
+                        </div>
+                    </div>
+                    <div class="cart-row">
+                        <div style="flex:2"><img class="row-image" src="images/mushroom.jpg" /></div>
+                        <div style="flex:2">
+                            <p>mushroom</p>
+                        </div>
+                        <div style="flex:1">
+                            <p>&#8377;10</p>
+                        </div>
+                        <div style="flex:1">
+                            <p class="quantity">3</p>
+                            <div class="quantity">
+                                <img data-product=1 data-action="add" class="chg-quantity update-cart"
+                                    src="images/arrow-up.png">
+
+                                <img data-product=1 data-action="remove"
+                                    class="chg-quantity update-cart" src="images/arrow-down.png">
+                            </div>
+                        </div>
+                        <div style="flex:1">
+                            <p>&#8377;30</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <footer>
+            <%- include ("partials/footer.ejs") %>
+        </footer>
+</body>
+
+</html>
