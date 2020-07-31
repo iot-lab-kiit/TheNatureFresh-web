@@ -106,10 +106,17 @@ app.get('/signin', (req, res) => {
 })
 
 app.post("/signup",upload, async (req, res) => {
-  var bytes = new Uint8Array(req.file.buffer)
-  var storageRef = storage.child(req.file.originalname)
-  const response = await storageRef.put(bytes, { contentType: req.file.mimetype })
-  var imageUrl = await storageRef.getDownloadURL()
+  try{
+    var bytes = new Uint8Array(req.file.buffer)
+    var storageRef = storage.child(req.file.originalname)
+    const response = await storageRef.put(bytes, { contentType: req.file.mimetype })
+    var imageUrl = await storageRef.getDownloadURL()
+  }
+  catch(err){
+    console.log(e)
+    res.json(e)
+  }
+
   const {
     email,
     phoneNumber,
@@ -219,7 +226,7 @@ app.post("/create-item", upload, async (req, res) => {
     imageUrl = await storageRef.getDownloadURL()
     var obj = {image_url:imageUrl,item_name:name,item_description:description,price:price,qty_available:quantity}
     var apires = await axios.post('http://localhost:3001/api/products/add',obj)
-    res.send("Uploaded")
+    res.redirect('/admin')
   }
   catch (e) {
     res.send("Error!")
