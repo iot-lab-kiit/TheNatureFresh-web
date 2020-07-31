@@ -41,7 +41,7 @@ app.use(
     rolling: true,
     resave: true,
     cookie: {
-      maxAge: 30000,
+      expires: 300000,
     },
   })
 );
@@ -61,25 +61,44 @@ app.use((req, res, next) => {
 const checkAdmin = (req, res, next) => {
   if (req.session.role == "admin" && req.cookies.creds && req.session.user)
     next();
-  else res.send("not authorised");
+  else res.redirect('/reroute')
 };
 
 const checkUser = (req, res, next) => {
   if (req.session.role == "user" && req.cookies.creds && req.session.user)
     next();
-  else res.send("not authorised");
+    else res.redirect('/reroute')
 };
 
 const checkLogin = (req, res, next) => {
   if (req.session.user && req.cookies.creds) next();
-  else res.send("not logged in");
+  else res.redirect('/reroute')
 };
 
 /////////////////
 //MIDDLEWARE END
 ////////////////
 
-app.post("/create", (req, res) => {
+
+////////////////
+// LOGIN START
+////////////////
+
+app.get('/signup', (req, res) => {
+  if (req.session.user && req.cookies.creds)
+    res.redirect('/reroute')
+  else
+    res.render('signup.ejs')
+})
+
+app.get('/signin', (req, res) => {
+  if (req.session.user && req.cookies.creds)
+    res.redirect('/reroute')
+  else
+    res.render('signin.ejs')
+})
+
+app.post("/signup", (req, res) => {
   console.log(req.body);
   const {
     email,
@@ -108,7 +127,7 @@ app.post("/create", (req, res) => {
         role: urole,
         address: uaddress,
       });
-      res.json(user);
+      res.redirect('/signin')
     })
     .catch((err) => {
       console.error(err);
@@ -132,7 +151,7 @@ app.post("/signin", async (req, res) => {
     req.session.user = user.user;
     req.session.role = frole;
     req.session.address = fadd;
-    res.redirect("/protected");
+    res.redirect("/reroute");
   } catch (err) {
     console.error("Signin Error!");
     res.json(err);
@@ -140,13 +159,26 @@ app.post("/signin", async (req, res) => {
 });
 
 
+app.get('/reroute',(req,res)=>{
+  if (req.session.role == "admin" && req.cookies.creds && req.session.user)
+    res.redirect('/admin')
+  else if (req.session.role == "user" && req.cookies.creds && req.session.user)
+    res.redirect('/client-profile')
+  else
+    res.redirect('/signin')
+})
+
+////////////////
+// LOGIN END
+////////////////
+
 /////////////////////
 //ADMIN START
 ////////////////////
 
-app.get("/admin", async (req, res) => {
+app.get("/admin",checkAdmin, async (req, res) => {
   var response = await axios.get('http://localhost:3001/api/products')
-  res.render('adminui/admin',{products:response.data});
+  res.render('adminui/admin',{products:response.data,user:req.session.user});
 });
 
 app.get("/create-item", (req, res) => {
@@ -201,13 +233,13 @@ app.get("/users", (req, res) => {
 //CLIENT START
 ////////////////////////
 
-app.get("/shop", async (req, res) => {
+app.get("/shop",checkUser, async (req, res) => {
   var response = await axios.get('http://localhost:3001/api/products')
   res.render('clientui/shop',{products:response.data});
 });
 
-app.get("/client-profile", (req, res) => {
-  res.render('clientui/profile');
+app.get("/client-profile",checkUser, (req, res) => {
+  res.render('clientui/profile',{user:req.session.user});
 });
 
 app.get("/cart", (req, res) => {
@@ -224,8 +256,7 @@ app.get("/checkout", (req, res) => {
 
 
 app.get("/", (req, res) => {
-  if (req.session.user) res.send(req.session.user);
-  else res.send("nopes");
+  res.redirect('/signin')
 });
 
 app.get("/protected", checkAdmin, (req, res) => {

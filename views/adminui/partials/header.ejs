@@ -1,6 +1,6 @@
 <!-- Navbar -->
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <a class="navbar-brand" href="/admin">Admin</a>
+    <a class="navbar-brand" href="/admin">Admin Panel</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
         aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
@@ -38,6 +38,8 @@
                 Search
             </button>
         </form>
+        
+        <span class="btn"><a href="/client-profile"><i class="fa fa-user" aria-hidden="true"></i></a><font style="color: white;">&nbsp; Welcome <%= user.displayName %></font></span>
     </div>
 </nav>
 <!-- Navbar Ends -->

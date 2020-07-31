@@ -14,8 +14,21 @@
     <div class="container">
         <div class="jumbotron">
             <div class="row">
-                <img src="images/mushroom.jpg" style="width: 150px; height: 100px;" alt="John Doe">
-                <h1 class="display-3">John Doe</h1>
+                <% if(user.photoURL!=null){%>
+                <img src="<%= user.photoUrl %>" style="width: 150px; height: 150px;" alt="John Doe">
+                <% } else {%>
+                    <img src="images/profile.webp" style="width: 150px; height: 150px;" alt="John Doe">
+                    <% }%>
+                <h1 class="display-3 p-3"><%= user.displayName %></h1><br>
+            </div>
+            <div class="row">
+                <div class="col-lg-4">
+                    <h6><strong></strong>EMAIL<span style="float: right;">&nbsp;<%=user.email %></span></h6><br>
+                    <h6><strong></strong>PHONE NUMBER<span style="float: right;">&nbsp;<%=user.phoneNumber %></span></h6><br>
+                </div>
+            </div>
+            <div class="row">
+                <h6><strong></strong>MyOrders</h6>
             </div>
         </div>
     </div>

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign In</title>
+    <link rel="stylesheet" 
+          href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" 
+          integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" 
+          crossorigin="anonymous">
+</head>
+<style>
+    * {
+        color: white;
+        outline: none;
+    }
+
+    input[type = text],
+    input[type = email],
+    input[type = password] {
+        width: 100%;
+        background-color: transparent; 
+        border: 2px solid white; 
+        border-radius: 10px;
+        margin-bottom: 10px;
+    }
+
+    button[type = submit] {
+        border: 2px solid white;
+        border-radius: 10px;
+    }
+
+    ::placeholder {
+        color: white;
+    }
+
+    #overlayDiv {
+        background-color: rgba(0, 0, 0, 0.493); 
+        border-radius: 10px;
+        margin-top: 20vh;
+    }
+</style>
+<body style="background-image: url('/images/BG.jpg'); background-size: cover; background-attachment: fixed;">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="mx-auto" style="width: 350px;">
+                <div class="p-5" id="overlayDiv">
+                    <h1 class="mb-4">Sign In</h1>
+                    <form method="POST" action="/signin">                        
+                        <input type="email" name="email" placeholder="Email" class="p-2" /><br>
+                        <input type="password" name="password" placeholder="Password" class="p-2" />
+                        <center><button type="submit" class="btn btn-outline-light mt-4 px-3">SUBMIT</button></center>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
