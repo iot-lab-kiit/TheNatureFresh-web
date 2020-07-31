@@ -1,12 +1,19 @@
 var admin = require("firebase-admin");
 var express = require("express");
 var bodyParser = require("body-parser");
-var auth = require("./firebaseClientConfig.js");
+var { auth, storage } = require("./firebaseClientConfig.js");
 var session = require("express-session");
 var cookieParser = require("cookie-parser");
 var serviceAccount = require("./credentials.json");
 var axios = require('axios');
+var multer = require('multer');
+global.XMLHttpRequest = require("xhr2");
 var app = express();
+
+let upload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 10000000 }
+}).single('image')
 
 app.use(express.static('public'));
 app.set('view engine', 'ejs');
@@ -41,7 +48,7 @@ app.use(
     rolling: true,
     resave: true,
     cookie: {
-      expires: 300000,
+      expires: 900000,
     },
   })
 );
@@ -98,8 +105,11 @@ app.get('/signin', (req, res) => {
     res.render('signin.ejs')
 })
 
-app.post("/signup", (req, res) => {
-  console.log(req.body);
+app.post("/signup",upload, async (req, res) => {
+  var bytes = new Uint8Array(req.file.buffer)
+  var storageRef = storage.child(req.file.originalname)
+  const response = await storageRef.put(bytes, { contentType: req.file.mimetype })
+  var imageUrl = await storageRef.getDownloadURL()
   const {
     email,
     phoneNumber,
@@ -108,7 +118,6 @@ app.post("/signup", (req, res) => {
     uaddress,
     firstName,
     lastName,
-    photoUrl,
   } = req.body;
 
   admin
@@ -118,7 +127,7 @@ app.post("/signup", (req, res) => {
       phoneNumber,
       password,
       displayName: `${firstName} ${lastName}`,
-      photoURL: photoUrl,
+      photoURL: imageUrl,
     })
     .then((user) => {
       console.log(user);
@@ -127,6 +136,7 @@ app.post("/signup", (req, res) => {
         role: urole,
         address: uaddress,
       });
+
       res.redirect('/signin')
     })
     .catch((err) => {
@@ -181,8 +191,8 @@ app.get("/admin",checkAdmin, async (req, res) => {
   res.render('adminui/admin',{products:response.data,user:req.session.user});
 });
 
-app.get("/create-item", (req, res) => {
-  res.render('adminui/create_item');
+app.get("/create-item", checkAdmin, async (req, res) => {
+  res.render('adminui/create_item',{user:req.session.user});
 });
 
 app.get("/orders", async (req, res) => {
@@ -192,8 +202,29 @@ app.get("/orders", async (req, res) => {
 });
 
 
-app.post("/create-item", (req, res) => {
-  res.send(req.body);
+app.post("/create-item", upload, async (req, res) => {
+
+  const {
+    name,
+    price,
+    description,
+    quantity
+  } = req.body;
+
+  var bytes = new Uint8Array(req.file.buffer)
+  var imageUrl;
+  try {
+    var storageRef = storage.child(req.file.originalname)
+    const response = await storageRef.put(bytes, { contentType: req.file.mimetype })
+    imageUrl = await storageRef.getDownloadURL()
+    var obj = {image_url:imageUrl,item_name:name,item_description:description,price:price,qty_available:quantity}
+    var apires = await axios.post('http://localhost:3001/api/products/add',obj)
+    res.send("Uploaded")
+  }
+  catch (e) {
+    res.send("Error!")
+    console.error(e)
+  }
 });
 
 app.get("/profile", (req, res) => {
@@ -216,10 +247,6 @@ app.get("/create-order", (req, res) => {
   res.render('adminui/create_order');
 });
 
-app.get("/create-item", (req, res) => {
-  res.render('adminui/create_item');
-});
-
 app.get("/users", (req, res) => {
   res.render('adminui/users');
 });
@@ -233,17 +260,29 @@ app.get("/users", (req, res) => {
 //CLIENT START
 ////////////////////////
 
-app.get("/shop",checkUser, async (req, res) => {
-  var response = await axios.get('http://localhost:3001/api/products')
-  res.render('clientui/shop',{products:response.data});
-});
-
 app.get("/client-profile",checkUser, (req, res) => {
   res.render('clientui/profile',{user:req.session.user});
 });
 
+var usercart = {
+  products:[],
+  itemCount:0
+}
+
+app.get("/shop",checkUser, async (req, res) => {
+  var response = await axios.get('http://localhost:3001/api/products')
+  res.render('clientui/shop',{products:response.data,usercart:usercart,user:req.session.user});
+});
+
+app.post('/cart',(req,res)=>{
+  var {cart} = req.body;
+  usercart = cart;
+  // console.log(usercart.products)
+  res.status(200).json({success:true});
+})
+
 app.get("/cart", (req, res) => {
-  res.render('clientui/cart');
+  res.render('clientui/cart',{cart:usercart,user:req.session.user})
 });
 
 app.get("/checkout", (req, res) => {

@@ -46,13 +46,15 @@
             <div class="mx-auto" style="width: 350px;">
                 <div class="p-5" id="overlayDiv">
                     <h1 class="mb-4">Sign Up</h1>
-                    <form method="POST" action="/signup">
+                    <form method="POST" action="/signup" enctype="multipart/form-data">
                         <input type="text" name="firstName" placeholder="First Name" class="p-2" /><input type="text" name="lastName" placeholder="Last Name" class="p-2" /><br>
                         <input type="email" name="email" placeholder="Email" class="p-2" /><br>
                         <input type="password" name="password" placeholder="Password" class="p-2" />
                         <input type="text" name="phoneNumber" placeholder="Number" class="p-2" />
                         <input type="text" name="urole" placeholder="Role" class="p-2" value="user" hidden/>
                         <input type="text" name="uaddress" placeholder="address" class="p-2" />
+                        <label for="file">Choose Image file</label>
+                        <input type="file" name="image" id="file">
                         <center><button type="submit" class="btn btn-outline-light mt-4 px-3">SUBMIT</button></center>
                     </form>
                 </div>

@@ -17,17 +17,18 @@
         <div class="row">
             <div class="col-lg-12">
                 <div class="box-element">
-                    <a class="btn btn-outline-dark" href="/">&#x2190; Continue Shopping</a>
+                    <a class="btn btn-outline-dark" href="/shop">&#x2190; Continue Shopping</a>
                     <br>
                     <br>
-
+                    <% var total = 0 %>
+                    <% cart.products.forEach(item=>{total+=item.price * item.qty_purchased})%>
                     <table class="table">
                         <tr>
                             <th>
-                                <h5>Items: <strong>9</strong></h5>
+                                <h5>Items: <strong><%= cart.itemCount %></strong></h5>
                             </th>
                             <th>
-                                <h5>Total: <strong>&#8377;90</strong></h5>
+                                <h5>Total: <strong>&#8377;<%= total %></strong></h5>
                             </th>
                             <th>
                                 <a style="float: right; margin: 5px;" class="btn btn-success"
@@ -47,72 +48,37 @@
                         <div style="flex:1"><strong>Quantity</strong></div>
                         <div style="flex:1"><strong>Total</strong></div>
                     </div>
+
+                    <% cart.products.forEach(function(item){%>
                     <div class="cart-row">
-                        <div style="flex:2"><img class="row-image" src="images/mushroom.jpg" /></div>
+
+
+                        <div style="flex:2"><img class="row-image" src="<%= item.image_url %>" /></div>
+
+
                         <div style="flex:2">
-                            <p>mushroom</p>
+                            <p><%= item.item_name %></p>
                         </div>
                         <div style="flex:1">
-                            <p>&#8377;10</p>
+                            <p>&#8377;<%= item.price %></p>
                         </div>
                         <div style="flex:1">
-                            <p class="quantity">3</p>
-                            <div class="quantity">
+                            <p><%= item.qty_purchased %></p>
+                            <!-- <div class="quantity">
                                 <img data-product=1 data-action="add" class="chg-quantity update-cart"
                                     src="images/arrow-up.png">
 
                                 <img data-product=1 data-action="remove"
                                     class="chg-quantity update-cart" src="images/arrow-down.png">
-                            </div>
+                            </div> -->
                         </div>
                         <div style="flex:1">
-                            <p>&#8377;30</p>
+                            <p>&#8377;<%= item.price * item.qty_purchased %></p>
                         </div>
                     </div>
-                    <div class="cart-row">
-                        <div style="flex:2"><img class="row-image" src="images/mushroom.jpg" /></div>
-                        <div style="flex:2">
-                            <p>mushroom</p>
-                        </div>
-                        <div style="flex:1">
-                            <p>&#8377;10</p>
-                        </div>
-                        <div style="flex:1">
-                            <p class="quantity">3</p>
-                            <div class="quantity">
-                                <img data-product=1 data-action="add" class="chg-quantity update-cart"
-                                    src="images/arrow-up.png">
+                    <%})%>
 
-                                <img data-product=1 data-action="remove"
-                                    class="chg-quantity update-cart" src="images/arrow-down.png">
-                            </div>
-                        </div>
-                        <div style="flex:1">
-                            <p>&#8377;30</p>
-                        </div>
-                    </div>
-                    <div class="cart-row">
-                        <div style="flex:2"><img class="row-image" src="images/mushroom.jpg" /></div>
-                        <div style="flex:2">
-                            <p>mushroom</p>
-                        </div>
-                        <div style="flex:1">
-                            <p>&#8377;10</p>
-                        </div>
-                        <div style="flex:1">
-                            <p class="quantity">3</p>
-                            <div class="quantity">
-                                <img data-product=1 data-action="add" class="chg-quantity update-cart"
-                                    src="images/arrow-up.png">
 
-                                <img data-product=1 data-action="remove"
-                                    class="chg-quantity update-cart" src="images/arrow-down.png">
-                            </div>
-                        </div>
-                        <div style="flex:1">
-                            <p>&#8377;30</p>
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>

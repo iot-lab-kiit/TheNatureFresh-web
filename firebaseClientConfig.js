@@ -1,5 +1,6 @@
 var firebase = require('firebase/app')
 require('firebase/auth')
+require('firebase/storage')
 
 const firebaseConfig = {
     apiKey: "AIzaSyBC4aReuYFlrobEWn6P9YnVjUb8UBPAvDA",
@@ -13,5 +14,8 @@ const firebaseConfig = {
 }
 
 firebase.initializeApp(firebaseConfig)
-module.exports = firebase.auth()
+module.exports = {
+    auth: firebase.auth(),
+    storage: firebase.storage().ref()
+}
 
