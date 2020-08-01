@@ -1,7 +1,8 @@
 const express = require('express')
 const orderRouter = express.Router()
 const database = require('../database/dbinit')
-const { getOrders, createOrder,getOrderByUserID,getOrderByOrderID } = require('../database/order')
+const { getOrders, createOrder,getOrderByUserID,getOrderByOrderID ,updateStatus  } = require('../database/order')
+const order = require('../database/order')
 const db = database.db
 
 orderRouter.get('/',async (req,res) => {
@@ -22,6 +23,17 @@ orderRouter.get('/ord/:id',async (req,res)=>{
     const id = req.params.id;
     const orderList = await getOrderByOrderID(id)
     res.json(orderList)
+})
+
+orderRouter.post('/create', async(req,res)=>{
+    const order  = await createOrder(req.body)
+    res.json(order)
+})
+
+orderRouter.post('/status/:id',async (req,res)=>{
+    const status = req.body;
+    var result = await updateStatus(req.params.id,status);
+    res.json(result)
 })
 
 module.exports = orderRouter

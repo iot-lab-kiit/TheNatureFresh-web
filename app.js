@@ -4,7 +4,6 @@ var bodyParser = require("body-parser")
 var { auth, storage } = require("./firebaseClientConfig.js")
 var session = require("express-session")
 var cookieParser = require("cookie-parser")
-var serviceAccount = require("./credentials.json")
 var axios = require('axios')
 var multer = require('multer')
 var orderRouter = require('./controllers/orderRouter')
@@ -206,7 +205,7 @@ app.get("/create-item", checkAdmin, async (req, res) => {
 app.get("/orders", checkAdmin, async (req, res) => {
   var response = await axios.get(`${apihost}/api/orders/`)
   // console.log(response.data)
-  res.render('adminui/orders', { products: response.data, user: req.session.user })
+  res.render('adminui/orders', { orders: response.data, user: req.session.user })
 })
 
 app.post("/create-item", upload, async (req, res) => {
@@ -285,24 +284,52 @@ var usercart = {
 }
 
 const createOrder = (cart, add, del_chrgs, req) => {
-  const ord_date = new Date()
+  const {
+    itemCount,
+    products
+  } = cart
+  var newcart = []
+  products.forEach(product => {
+    const {
+      price,
+      item_name,
+      image_url,
+      item_description,
+      id,
+      qty_available,
+      qty_purchased
+    } = product;
+    var newObj = { 
+      price: parseFloat(price), 
+      item_name: item_name, 
+      image_url: image_url, 
+      item_description: item_description, 
+      id: id, 
+      qty_available: parseFloat(qty_available), 
+      qty_purchased: parseFloat(qty_purchased) 
+    }
+    newcart.push(newObj)
+  })
+  var finalCart = { itemCount: parseFloat(itemCount), products: newcart }
+
+  const ord_date = admin.firestore.Timestamp.fromDate(new Date())
   var tot = 0
-  cart.products.forEach(item => {
+  finalCart.products.forEach(item => {
     tot += parseFloat(item.price * item.qty_purchased)
   })
   var order = {
     user_id: req.session.user.uid,
-    phone_number: req.session.user.phoneNumber,
+    phone_number: parseFloat(req.session.user.phoneNumber),
     address: add,
     order_date: ord_date,
     order_day: new Date().toDateString(),
-    total: (tot + del_chrgs).toFixed(2),
-    gst: (0.07 * tot).toFixed(2),
-    delivery_charge: del_chrgs,
-    cgst: (0.07 * 0.5 * tot).toFixed(2),
-    sgst: (0.07 * 0.5 * tot).toFixed(2),
+    total: parseFloat((tot + del_chrgs).toFixed(2)),
+    gst: parseFloat((0.07 * tot).toFixed(2)),
+    delivery_charge: parseFloat(del_chrgs),
+    cgst: parseFloat((0.07 * 0.5 * tot).toFixed(2)),
+    sgst: parseFloat((0.07 * 0.5 * tot).toFixed(2)),
     orderStatus: "Confirmed",
-    cart: cart
+    cart: finalCart
   }
   return (order)
 }
@@ -319,6 +346,7 @@ app.get("/shop", checkUser, async (req, res) => {
 
 app.post('/cart', checkUser, (req, res) => {
   var { cart } = req.body
+  console.log(cart)
   usercart = cart
   res.status(200).json({ success: true })
 })
@@ -333,14 +361,25 @@ app.get('/order-details/:id', checkUser, async (req, res) => {
   res.render('clientui/order_detail', { user: req.session.user, orders: response.data })
 })
 
+app.post('/updateStatus',async(req,res)=>{
+  const { id,status} = req.body;
+  var response = await axios.post(`${apihost}/api/orders/status/${id}`,status)
+  res.status(200).json({success:response})
+})
+
 app.get("/checkout", checkUser, (req, res) => {
   res.render('clientui/checkout', { user: req.session.user, cart: usercart, address: req.session.address })
 })
 
-app.post("/checkout", checkUser, (req, res) => {
+app.post("/checkout", checkUser, async (req, res) => {
   const { address } = req.body
   var order = createOrder(usercart, address, 50, req)
-  res.json(order)
+  var apires = await axios.post(`${apihost}/api/orders/create`, order)
+  res.redirect('/client-profile')
+})
+
+app.get('/update-profile', checkUser, (req, res) => {
+  res.render('clientui/edit_profile', { user: req.session.user, address: req.session.address })
 })
 
 ////////////////////////

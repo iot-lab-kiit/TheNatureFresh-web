@@ -9,7 +9,6 @@ productRouter.get('/',async (req,res) => {
     let products = []
     snapshots.forEach(snapshot => {
         products.push(snapshot.data())
-        console.log(snapshot.data())
     })
     res.status(200).json(products);
 

@@ -17,11 +17,31 @@ const getOrders = async () => {
 }
 
 const createOrder = async order => {
+
+    order.cart.products.forEach(async (item) => {
+        const productRef = db.collection('products').doc(item.id);
+        try {
+            const res = await db.runTransaction(async t => {
+                const doc = await t.get(productRef);
+                const newQty = doc.data().qty_available - item.qty_purchased;
+                if (newQty >= 0) {
+                    await t.update(productRef, { qty_available: newQty });
+                    console.log(`qty_available set to ${newQty}`);
+                } else {
+                    throw 'Sorry! qty_available is invalid';
+                }
+            });
+            console.log('Transaction success');
+        } catch (e) {
+            console.log('Transaction failure:', e);
+        }
+    })
     const document = db.collection('orders').doc()
     document.create({
         id: document.id,
         ...order
     })
+    return order
 }
 
 const getOrderByUserID = async (id) => {
@@ -60,4 +80,16 @@ const getOrderByOrderID = async (id) => {
     }
 }
 
-module.exports = { getOrders, createOrder,getOrderByUserID,getOrderByOrderID}
+const updateStatus = async (id, status) => {
+    try {
+        const Ref = db.collection('orders').doc(id)
+        const res = await Ref.update(status)
+        console.log(res)
+        return true
+    } catch (error) {
+        console.log(error)
+        return false
+    }
+}
+
+module.exports = { getOrders, createOrder, getOrderByUserID, getOrderByOrderID, updateStatus }
