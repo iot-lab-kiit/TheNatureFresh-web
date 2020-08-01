@@ -1,31 +1,25 @@
-var admin = require("firebase-admin");
-var express = require("express");
-var bodyParser = require("body-parser");
-var { auth, storage } = require("./firebaseClientConfig.js");
-var session = require("express-session");
-var cookieParser = require("cookie-parser");
-var serviceAccount = require("./credentials.json");
-var axios = require('axios');
-var multer = require('multer');
-global.XMLHttpRequest = require("xhr2");
-const orderRouter = require('./controllers/orderRouter')
-const productRouter = require('./controllers/productRouter')
-var app = express();
+var admin = require("firebase-admin")
+var express = require("express")
+var bodyParser = require("body-parser")
+var { auth, storage } = require("./firebaseClientConfig.js")
+var session = require("express-session")
+var cookieParser = require("cookie-parser")
+var serviceAccount = require("./credentials.json")
+var axios = require('axios')
+var multer = require('multer')
+var orderRouter = require('./controllers/orderRouter')
+var productRouter = require('./controllers/productRouter')
 
-const apihost = 'http://localhost:3000'
+global.XMLHttpRequest = require("xhr2")
 
-let upload = multer({
-  storage: multer.memoryStorage(),
-  limits: { fileSize: 10000000 }
-}).single('image')
+var app = express()
 
-app.use(express.static('public'));
-app.set('view engine', 'ejs');
-app.set('views', './views');
-app.use(cookieParser());
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.static('public'))
+app.set('view engine', 'ejs')
+app.set('views', './views')
+app.use(cookieParser())
+app.use(bodyParser.urlencoded({ extended: true }))
 app.use(express.json())
-
 app.use('/api/orders', orderRouter)
 app.use('/api/products', productRouter)
 
@@ -52,14 +46,14 @@ app.use(
       expires: 900000,
     },
   })
-);
+)
 
 app.use((req, res, next) => {
   if (req.cookies.creds && !req.session.user) {
-    res.clearCookie("creds");
+    res.clearCookie("creds")
   }
-  next();
-});
+  next()
+})
 
 
 /////////////////
@@ -68,20 +62,27 @@ app.use((req, res, next) => {
 
 const checkAdmin = (req, res, next) => {
   if (req.session.role == "admin" && req.cookies.creds && req.session.user)
-    next();
+    next()
   else res.redirect('/reroute')
-};
+}
 
 const checkUser = (req, res, next) => {
   if (req.session.role == "user" && req.cookies.creds && req.session.user)
-    next();
+    next()
   else res.redirect('/reroute')
-};
+}
 
 const checkLogin = (req, res, next) => {
-  if (req.session.user && req.cookies.creds) next();
+  if (req.session.user && req.cookies.creds) next()
   else res.redirect('/reroute')
-};
+}
+
+let upload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 10000000 }
+}).single('image')
+
+const apihost = 'http://localhost:3000'
 
 /////////////////
 //MIDDLEWARE END
@@ -126,7 +127,7 @@ app.post("/signup", upload, async (req, res) => {
     uaddress,
     firstName,
     lastName,
-  } = req.body;
+  } = req.body
 
   admin
     .auth()
@@ -138,43 +139,43 @@ app.post("/signup", upload, async (req, res) => {
       photoURL: imageUrl,
     })
     .then((user) => {
-      // console.log(user);
+      // console.log(user)
       db.collection("users").add({
         uid: user.uid,
         role: urole,
         address: uaddress,
-      });
+      })
 
       res.redirect('/signin')
     })
     .catch((err) => {
-      console.error(err);
-      res.json(err);
-    });
-});
+      console.error(err)
+      res.json(err)
+    })
+})
 
 app.post("/signin", async (req, res) => {
-  const { email, password } = req.body;
-  var frole, fadd;
+  const { email, password } = req.body
+  var frole, fadd
   try {
-    var user = await auth.signInWithEmailAndPassword(email, password);
+    var user = await auth.signInWithEmailAndPassword(email, password)
     var snap = await db
       .collection("users")
       .where("uid", "==", user.user.uid)
-      .get();
+      .get()
     snap.forEach((doc) => {
-      frole = doc.data().role;
-      fadd = doc.data().address;
-    });
-    req.session.user = user.user;
-    req.session.role = frole;
-    req.session.address = fadd;
-    res.redirect("/reroute");
+      frole = doc.data().role
+      fadd = doc.data().address
+    })
+    req.session.user = user.user
+    req.session.role = frole
+    req.session.address = fadd
+    res.redirect("/reroute")
   } catch (err) {
-    console.error("Signin Error!");
-    res.json(err);
+    console.error("Signin Error!")
+    res.json(err)
   }
-});
+})
 
 app.get('/reroute', (req, res) => {
   if (req.session.role == "admin" && req.cookies.creds && req.session.user)
@@ -195,19 +196,18 @@ app.get('/reroute', (req, res) => {
 
 app.get("/admin", checkAdmin, async (req, res) => {
   var response = await axios.get(`${apihost}/api/products`)
-  res.render('adminui/admin', { products: response.data, user: req.session.user });
-});
+  res.render('adminui/admin', { products: response.data, user: req.session.user })
+})
 
 app.get("/create-item", checkAdmin, async (req, res) => {
-  res.render('adminui/create_item', { user: req.session.user });
-});
+  res.render('adminui/create_item', { user: req.session.user })
+})
 
 app.get("/orders", checkAdmin, async (req, res) => {
   var response = await axios.get(`${apihost}/api/orders/`)
-  // console.log(response.data);
-  res.render('adminui/orders', { products: response.data, user: req.session.user });
-});
-
+  // console.log(response.data)
+  res.render('adminui/orders', { products: response.data, user: req.session.user })
+})
 
 app.post("/create-item", upload, async (req, res) => {
   const {
@@ -215,10 +215,10 @@ app.post("/create-item", upload, async (req, res) => {
     price,
     description,
     quantity
-  } = req.body;
+  } = req.body
 
   var bytes = new Uint8Array(req.file.buffer)
-  var imageUrl;
+  var imageUrl
   try {
     var storageRef = storage.child(req.file.originalname)
     const response = await storageRef.put(bytes, { contentType: req.file.mimetype })
@@ -232,17 +232,13 @@ app.post("/create-item", upload, async (req, res) => {
     res.send("Error!")
     console.error(e)
   }
-});
-
-app.get("/edit-user", (req, res) => {
-  res.render('adminui/edit_user', { user: req.session.user });
-});
+})
 
 app.get("/edit-item/:id", checkAdmin, async (req, res) => {
   var response = await axios.get(`${apihost}/api/products/details/${req.params.id}`)
   // console.log(response.data)
-  res.render('adminui/edit_item', { user: req.session.user, product: response.data });
-});
+  res.render('adminui/edit_item', { user: req.session.user, product: response.data })
+})
 
 app.post("/edit-item/", checkAdmin, async (req, res) => {
   const {
@@ -251,28 +247,28 @@ app.post("/edit-item/", checkAdmin, async (req, res) => {
     price,
     description,
     quantity
-  } = req.body;
+  } = req.body
   var obj = { item_name: name, item_description: description, price: parseFloat(price), qty_available: parseInt(quantity) }
   // console.log(obj)
   var apires = await axios({
     method: 'post',
     url: `${apihost}/api/products/update/${id}`,
     data: obj,
-  });
+  })
   res.redirect('/admin')
-});
+})
 
 app.get("/edit-order", (req, res) => {
-  res.render('adminui/edit_order', { user: req.session.user });
-});
+  res.render('adminui/edit_order', { user: req.session.user })
+})
 
 app.get("/users", (req, res) => {
-  res.render('adminui/users', { user: req.session.user });
-});
+  res.render('adminui/users', { user: req.session.user })
+})
 
 app.get("/profile", (req, res) => {
-  res.render('adminui/profile', { user: req.session.user });
-});
+  res.render('adminui/profile', { user: req.session.user })
+})
 
 /////////////////////
 //ADMIN END
@@ -313,23 +309,23 @@ const createOrder = (cart, add, del_chrgs, req) => {
 
 app.get("/client-profile", checkUser, async (req, res) => {
   var response = await axios.get(`${apihost}/api/orders/${req.session.user.uid}`)
-  res.render('clientui/profile', { user: req.session.user, address: req.session.address, orders: response.data });
-});
+  res.render('clientui/profile', { user: req.session.user, address: req.session.address, orders: response.data })
+})
 
 app.get("/shop", checkUser, async (req, res) => {
   var response = await axios.get(`${apihost}/api/products`)
-  res.render('clientui/shop', { products: response.data, usercart: usercart, user: req.session.user });
-});
+  res.render('clientui/shop', { products: response.data, usercart: usercart, user: req.session.user })
+})
 
 app.post('/cart', checkUser, (req, res) => {
-  var { cart } = req.body;
-  usercart = cart;
-  res.status(200).json({ success: true });
+  var { cart } = req.body
+  usercart = cart
+  res.status(200).json({ success: true })
 })
 
 app.get("/cart", checkUser, (req, res) => {
   res.render('clientui/cart', { cart: usercart, user: req.session.user })
-});
+})
 
 app.get('/order-details/:id', checkUser, async (req, res) => {
   var response = await axios.get(`${apihost}/api/orders/ord/${req.params.id}`)
@@ -338,11 +334,11 @@ app.get('/order-details/:id', checkUser, async (req, res) => {
 })
 
 app.get("/checkout", checkUser, (req, res) => {
-  res.render('clientui/checkout', { user: req.session.user, cart: usercart, address: req.session.address });
-});
+  res.render('clientui/checkout', { user: req.session.user, cart: usercart, address: req.session.address })
+})
 
 app.post("/checkout", checkUser, (req, res) => {
-  const { address } = req.body;
+  const { address } = req.body
   var order = createOrder(usercart, address, 50, req)
   res.json(order)
 })
@@ -354,16 +350,16 @@ app.post("/checkout", checkUser, (req, res) => {
 
 app.get("/", (req, res) => {
   res.redirect('/signin')
-});
+})
 
 app.get("/protected", checkAdmin, (req, res) => {
-  res.status(200).json({ message: "Protected Resource!" });
-});
+  res.status(200).json({ message: "Protected Resource!" })
+})
 
 app.get("/loggedin", checkLogin, (req, res) => {
-  res.status(200).json({ message: "Logged In" });
-});
+  res.status(200).json({ message: "Logged In" })
+})
 
 app.listen(3000, () => {
-  console.log("App Listening at port 3000");
-});
+  console.log("App Listening at port 3000")
+})
