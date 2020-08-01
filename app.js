@@ -8,7 +8,14 @@ var serviceAccount = require("./credentials.json");
 var axios = require('axios');
 var multer = require('multer');
 global.XMLHttpRequest = require("xhr2");
+const orderRouter = require('./controllers/orderRouter')
+const productRouter = require('./controllers/productRouter')
 var app = express();
+
+app.use('/api/orders',orderRouter)
+app.use('/api/products',productRouter)
+
+const apihost = 'http://localhost:3000'
 
 let upload = multer({
   storage: multer.memoryStorage(),
@@ -26,14 +33,8 @@ app.use(bodyParser.json());
 //FIREBASE INIT
 ////////////////////
 
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
-  databaseURL: "https://thenaturemushroom.firebaseio.com",
-  storageBucket: "thenaturemushroom.appspot.com"
-});
-
-const db = admin.firestore();
-var bucket = admin.storage().bucket();
+const database = require('./database/dbinit')
+const db = database.db
 
 //////////////////
 //COOKIE SET
@@ -194,7 +195,7 @@ app.get('/reroute', (req, res) => {
 ////////////////////
 
 app.get("/admin", checkAdmin, async (req, res) => {
-  var response = await axios.get('http://localhost:3001/api/products')
+  var response = await axios.get(`${apihost}/api/products`)
   res.render('adminui/admin', { products: response.data, user: req.session.user });
 });
 
@@ -202,10 +203,10 @@ app.get("/create-item", checkAdmin, async (req, res) => {
   res.render('adminui/create_item', { user: req.session.user });
 });
 
-app.get("/orders", async (req, res) => {
-  var response = await axios.get('http://localhost:3001/api/orders/')
+app.get("/orders",checkAdmin, async (req, res) => {
+  var response = await axios.get(`${apihost}/api/orders/`)
   console.log(response.data);
-  res.render('orders', { products: response.data });
+  res.render('adminui/orders', { products: response.data ,user: req.session.user });
 });
 
 
@@ -224,8 +225,8 @@ app.post("/create-item", upload, async (req, res) => {
     var storageRef = storage.child(req.file.originalname)
     const response = await storageRef.put(bytes, { contentType: req.file.mimetype })
     imageUrl = await storageRef.getDownloadURL()
-    var obj = { image_url: imageUrl, item_name: name, item_description: description, price: price, qty_available: quantity }
-    var apires = await axios.post('http://localhost:3001/api/products/add', obj)
+    var obj = { image_url: imageUrl, item_name: name, item_description: description, price: parseFloat(price), qty_available: parseInt(quantity) }
+    var apires = await axios.post(`${apihost}/api/products/add`, obj)
     res.redirect('/admin')
   }
   catch (e) {
@@ -292,7 +293,7 @@ const createOrder = (cart, add, del_chrgs, req) => {
 
 
 app.get("/client-profile", checkUser, async (req, res) => {
-  var response = await axios.get(`http://localhost:3001/api/orders/${req.session.user.uid}`)
+  var response = await axios.get(`${apihost}/api/orders/${req.session.user.uid}`)
   res.render('clientui/profile', { user: req.session.user, address: req.session.address, orders: response.data });
 });
 
@@ -302,7 +303,7 @@ var usercart = {
 }
 
 app.get("/shop", checkUser, async (req, res) => {
-  var response = await axios.get('http://localhost:3001/api/products')
+  var response = await axios.get(`${apihost}/api/products`)
   res.render('clientui/shop', { products: response.data, usercart: usercart, user: req.session.user });
 });
 
@@ -317,7 +318,7 @@ app.get("/cart", checkUser, (req, res) => {
 });
 
 app.get('/order-details/:id',checkUser, async(req,res)=>{
-  var response = await axios.get(`http://localhost:3001/api/orders/ord/${req.params.id}`)
+  var response = await axios.get(`${apihost}/api/orders/ord/${req.params.id}`)
   console.log(response.data)
     res.render('clientui/order_detail',{ user: req.session.user,orders:response.data})
 })
