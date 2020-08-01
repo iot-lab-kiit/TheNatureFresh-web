@@ -41,6 +41,7 @@
                                 <th scope="col">Items</th>
                                 <th scope="col">Address</th>
                                 <th scope="col">Total</th>
+                                <th scope="col">Status</th>
                                 <th scope="col">Operations</th>
                             </tr>
                         </thead>
@@ -57,6 +58,7 @@
                                     </td>
                                     <td><%= order.address %></td>
                                     <td><%= order.total %></td>
+                                    <td><%= order.orderStatus %></td>
                                     <td>
                                         <a href="/order-details/<%= order.orderid %>"><button type="button" class="btn btn-sm btn-warning">Details</button></a>
                                     </td>

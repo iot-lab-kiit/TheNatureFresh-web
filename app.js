@@ -1,5 +1,4 @@
 var admin = require("firebase-admin");
-var firebase = require('firebase/app')
 var express = require("express");
 var bodyParser = require("body-parser");
 var { auth, storage } = require("./firebaseClientConfig.js");
@@ -285,6 +284,7 @@ const createOrder = (cart, add, del_chrgs, req) => {
     delivery_charge: del_chrgs,
     cgst: (0.07 * 0.5 * tot).toFixed(2),
     sgst: (0.07 * 0.5 * tot).toFixed(2),
+    orderStatus:"Confirmed",
     cart: cart
   }
   return(order)
@@ -309,7 +309,6 @@ app.get("/shop", checkUser, async (req, res) => {
 app.post('/cart', checkUser, (req, res) => {
   var { cart } = req.body;
   usercart = cart;
-  // console.log(usercart.products)
   res.status(200).json({ success: true });
 })
 
