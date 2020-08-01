@@ -15,28 +15,26 @@
 
         <!-- Edit Mushroom -->
         <h5><strong>Edit Mushroom:<strong></strong></h5>
-        <form>
+        <form method="POST" action="/edit-item">
+            <input type="text" class="form-control" id="id" name="id" value="<%= product.id %>" hidden/>
             <div class="form-group">
                 <label for="name">Name:</label>
-                <input type="text" class="form-control" id="name" name="name" value="Cantharel" />
+                <input type="text" class="form-control" id="name" name="name" value="<%= product.item_name %>" />
             </div>
             <div class="form-group">
                 <label for="price">Price in &#8377;:</label>
-                <input type="number" class="form-control" id="price" name="price" value=20 />
+                <input type="number" class="form-control" id="price" name="price" value="<%= product.price %>"  />
             </div>
             <div class="form-group">
                 <label for="description">Description:</label>
-                <textarea class="form-control" rows="5" id="description" name="description"></textarea>
+                <textarea class="form-control" rows="5" id="description" name="description"><%= product.item_description %></textarea>
             </div>
             <div class="form-group">
                 <label for="quantity">Qyantity In KGs:</label>
-                <input type="number" class="form-control" id="quantity" name="quantity" value=50 />
-            </div>
-            <div class="form-group">
-                <label for="image">Upload a picture:</label>
-                <input type="file" class="form-control-file" id="image" />
-            </div>
-            <button type="submit" class="btn btn-primary">Edit</button>
+                <input type="number" class="form-control" id="quantity" name="quantity" value="<%= product.qty_available %>" />
+            </div> 
+            <br><br>
+            <center><button type="submit" class="btn btn-primary my-4">Submit</button></center>
         </form>
         <!-- Edit Mushroom Ends -->
 

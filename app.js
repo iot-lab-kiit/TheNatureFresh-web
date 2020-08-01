@@ -12,9 +12,6 @@ const orderRouter = require('./controllers/orderRouter')
 const productRouter = require('./controllers/productRouter')
 var app = express();
 
-app.use('/api/orders',orderRouter)
-app.use('/api/products',productRouter)
-
 const apihost = 'http://localhost:3000'
 
 let upload = multer({
@@ -27,7 +24,10 @@ app.set('view engine', 'ejs');
 app.set('views', './views');
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json());
+app.use(express.json())
+
+app.use('/api/orders', orderRouter)
+app.use('/api/products', productRouter)
 
 ////////////////////
 //FIREBASE INIT
@@ -138,7 +138,7 @@ app.post("/signup", upload, async (req, res) => {
       photoURL: imageUrl,
     })
     .then((user) => {
-      console.log(user);
+      // console.log(user);
       db.collection("users").add({
         uid: user.uid,
         role: urole,
@@ -176,7 +176,6 @@ app.post("/signin", async (req, res) => {
   }
 });
 
-
 app.get('/reroute', (req, res) => {
   if (req.session.role == "admin" && req.cookies.creds && req.session.user)
     res.redirect('/admin')
@@ -203,15 +202,14 @@ app.get("/create-item", checkAdmin, async (req, res) => {
   res.render('adminui/create_item', { user: req.session.user });
 });
 
-app.get("/orders",checkAdmin, async (req, res) => {
+app.get("/orders", checkAdmin, async (req, res) => {
   var response = await axios.get(`${apihost}/api/orders/`)
-  console.log(response.data);
-  res.render('adminui/orders', { products: response.data ,user: req.session.user });
+  // console.log(response.data);
+  res.render('adminui/orders', { products: response.data, user: req.session.user });
 });
 
 
 app.post("/create-item", upload, async (req, res) => {
-
   const {
     name,
     price,
@@ -226,6 +224,7 @@ app.post("/create-item", upload, async (req, res) => {
     const response = await storageRef.put(bytes, { contentType: req.file.mimetype })
     imageUrl = await storageRef.getDownloadURL()
     var obj = { image_url: imageUrl, item_name: name, item_description: description, price: parseFloat(price), qty_available: parseInt(quantity) }
+    // console.log(obj)
     var apires = await axios.post(`${apihost}/api/products/add`, obj)
     res.redirect('/admin')
   }
@@ -235,28 +234,44 @@ app.post("/create-item", upload, async (req, res) => {
   }
 });
 
-app.get("/profile", (req, res) => {
-  res.render('adminui/profile');
-});
-
 app.get("/edit-user", (req, res) => {
-  res.render('adminui/edit_user');
+  res.render('adminui/edit_user', { user: req.session.user });
 });
 
-app.get("/edit-item", (req, res) => {
-  res.render('adminui/edit_item');
+app.get("/edit-item/:id", checkAdmin, async (req, res) => {
+  var response = await axios.get(`${apihost}/api/products/details/${req.params.id}`)
+  // console.log(response.data)
+  res.render('adminui/edit_item', { user: req.session.user, product: response.data });
+});
+
+app.post("/edit-item/", checkAdmin, async (req, res) => {
+  const {
+    id,
+    name,
+    price,
+    description,
+    quantity
+  } = req.body;
+  var obj = { item_name: name, item_description: description, price: parseFloat(price), qty_available: parseInt(quantity) }
+  // console.log(obj)
+  var apires = await axios({
+    method: 'post',
+    url: `${apihost}/api/products/update/${id}`,
+    data: obj,
+  });
+  res.redirect('/admin')
 });
 
 app.get("/edit-order", (req, res) => {
-  res.render('adminui/edit_order');
-});
-
-app.get("/create-order", (req, res) => {
-  res.render('adminui/create_order');
+  res.render('adminui/edit_order', { user: req.session.user });
 });
 
 app.get("/users", (req, res) => {
-  res.render('adminui/users');
+  res.render('adminui/users', { user: req.session.user });
+});
+
+app.get("/profile", (req, res) => {
+  res.render('adminui/profile', { user: req.session.user });
 });
 
 /////////////////////
@@ -267,12 +282,17 @@ app.get("/users", (req, res) => {
 ////////////////////////
 //CLIENT START
 ////////////////////////
+
+var usercart = {
+  products: [],
+  itemCount: 0
+}
+
 const createOrder = (cart, add, del_chrgs, req) => {
   const ord_date = new Date()
   var tot = 0
   cart.products.forEach(item => {
     tot += parseFloat(item.price * item.qty_purchased)
-    console.log(tot)
   })
   var order = {
     user_id: req.session.user.uid,
@@ -285,22 +305,16 @@ const createOrder = (cart, add, del_chrgs, req) => {
     delivery_charge: del_chrgs,
     cgst: (0.07 * 0.5 * tot).toFixed(2),
     sgst: (0.07 * 0.5 * tot).toFixed(2),
-    orderStatus:"Confirmed",
+    orderStatus: "Confirmed",
     cart: cart
   }
-  return(order)
+  return (order)
 }
-
 
 app.get("/client-profile", checkUser, async (req, res) => {
   var response = await axios.get(`${apihost}/api/orders/${req.session.user.uid}`)
   res.render('clientui/profile', { user: req.session.user, address: req.session.address, orders: response.data });
 });
-
-var usercart = {
-  products: [],
-  itemCount: 0
-}
 
 app.get("/shop", checkUser, async (req, res) => {
   var response = await axios.get(`${apihost}/api/products`)
@@ -317,19 +331,19 @@ app.get("/cart", checkUser, (req, res) => {
   res.render('clientui/cart', { cart: usercart, user: req.session.user })
 });
 
-app.get('/order-details/:id',checkUser, async(req,res)=>{
+app.get('/order-details/:id', checkUser, async (req, res) => {
   var response = await axios.get(`${apihost}/api/orders/ord/${req.params.id}`)
-  console.log(response.data)
-    res.render('clientui/order_detail',{ user: req.session.user,orders:response.data})
+  // console.log(response.data)
+  res.render('clientui/order_detail', { user: req.session.user, orders: response.data })
 })
 
 app.get("/checkout", checkUser, (req, res) => {
-  res.render('clientui/checkout',{user: req.session.user,cart:usercart,address:req.session.address });
+  res.render('clientui/checkout', { user: req.session.user, cart: usercart, address: req.session.address });
 });
 
-app.post("/checkout",checkUser,(req,res)=>{
+app.post("/checkout", checkUser, (req, res) => {
   const { address } = req.body;
-  var order  = createOrder(usercart,address, 50, req)
+  var order = createOrder(usercart, address, 50, req)
   res.json(order)
 })
 
