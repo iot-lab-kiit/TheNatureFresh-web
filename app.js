@@ -1,4 +1,5 @@
 var admin = require("firebase-admin");
+var firebase = require('firebase/app')
 var express = require("express");
 var bodyParser = require("body-parser");
 var { auth, storage } = require("./firebaseClientConfig.js");
@@ -74,7 +75,7 @@ const checkAdmin = (req, res, next) => {
 const checkUser = (req, res, next) => {
   if (req.session.role == "user" && req.cookies.creds && req.session.user)
     next();
-    else res.redirect('/reroute')
+  else res.redirect('/reroute')
 };
 
 const checkLogin = (req, res, next) => {
@@ -105,14 +106,14 @@ app.get('/signin', (req, res) => {
     res.render('signin.ejs')
 })
 
-app.post("/signup",upload, async (req, res) => {
-  try{
+app.post("/signup", upload, async (req, res) => {
+  try {
     var bytes = new Uint8Array(req.file.buffer)
     var storageRef = storage.child(req.file.originalname)
     const response = await storageRef.put(bytes, { contentType: req.file.mimetype })
     var imageUrl = await storageRef.getDownloadURL()
   }
-  catch(err){
+  catch (err) {
     console.log(e)
     res.json(e)
   }
@@ -176,7 +177,7 @@ app.post("/signin", async (req, res) => {
 });
 
 
-app.get('/reroute',(req,res)=>{
+app.get('/reroute', (req, res) => {
   if (req.session.role == "admin" && req.cookies.creds && req.session.user)
     res.redirect('/admin')
   else if (req.session.role == "user" && req.cookies.creds && req.session.user)
@@ -193,19 +194,19 @@ app.get('/reroute',(req,res)=>{
 //ADMIN START
 ////////////////////
 
-app.get("/admin",checkAdmin, async (req, res) => {
+app.get("/admin", checkAdmin, async (req, res) => {
   var response = await axios.get('http://localhost:3001/api/products')
-  res.render('adminui/admin',{products:response.data,user:req.session.user});
+  res.render('adminui/admin', { products: response.data, user: req.session.user });
 });
 
 app.get("/create-item", checkAdmin, async (req, res) => {
-  res.render('adminui/create_item',{user:req.session.user});
+  res.render('adminui/create_item', { user: req.session.user });
 });
 
 app.get("/orders", async (req, res) => {
   var response = await axios.get('http://localhost:3001/api/orders/')
   console.log(response.data);
-  res.render('orders',{products:response.data});
+  res.render('orders', { products: response.data });
 });
 
 
@@ -224,8 +225,8 @@ app.post("/create-item", upload, async (req, res) => {
     var storageRef = storage.child(req.file.originalname)
     const response = await storageRef.put(bytes, { contentType: req.file.mimetype })
     imageUrl = await storageRef.getDownloadURL()
-    var obj = {image_url:imageUrl,item_name:name,item_description:description,price:price,qty_available:quantity}
-    var apires = await axios.post('http://localhost:3001/api/products/add',obj)
+    var obj = { image_url: imageUrl, item_name: name, item_description: description, price: price, qty_available: quantity }
+    var apires = await axios.post('http://localhost:3001/api/products/add', obj)
     res.redirect('/admin')
   }
   catch (e) {
@@ -266,35 +267,71 @@ app.get("/users", (req, res) => {
 ////////////////////////
 //CLIENT START
 ////////////////////////
+const createOrder = (cart, add, del_chrgs, req) => {
+  const ord_date = new Date()
+  var tot = 0
+  cart.products.forEach(item => {
+    tot += parseFloat(item.price * item.qty_purchased)
+    console.log(tot)
+  })
+  var order = {
+    user_id: req.session.user.uid,
+    phone_number: req.session.user.phoneNumber,
+    address: add,
+    order_date: ord_date,
+    order_day: new Date().toDateString(),
+    total: (tot + del_chrgs).toFixed(2),
+    gst: (0.07 * tot).toFixed(2),
+    delivery_charge: del_chrgs,
+    cgst: (0.07 * 0.5 * tot).toFixed(2),
+    sgst: (0.07 * 0.5 * tot).toFixed(2),
+    cart: cart
+  }
+  return(order)
+}
 
-app.get("/client-profile",checkUser, (req, res) => {
-  res.render('clientui/profile',{user:req.session.user});
+
+app.get("/client-profile", checkUser, async (req, res) => {
+  var response = await axios.get(`http://localhost:3001/api/orders/${req.session.user.uid}`)
+  res.render('clientui/profile', { user: req.session.user, address: req.session.address, orders: response.data });
 });
 
 var usercart = {
-  products:[],
-  itemCount:0
+  products: [],
+  itemCount: 0
 }
 
-app.get("/shop",checkUser, async (req, res) => {
+app.get("/shop", checkUser, async (req, res) => {
   var response = await axios.get('http://localhost:3001/api/products')
-  res.render('clientui/shop',{products:response.data,usercart:usercart,user:req.session.user});
+  res.render('clientui/shop', { products: response.data, usercart: usercart, user: req.session.user });
 });
 
-app.post('/cart',(req,res)=>{
-  var {cart} = req.body;
+app.post('/cart', checkUser, (req, res) => {
+  var { cart } = req.body;
   usercart = cart;
   // console.log(usercart.products)
-  res.status(200).json({success:true});
+  res.status(200).json({ success: true });
 })
 
-app.get("/cart", (req, res) => {
-  res.render('clientui/cart',{cart:usercart,user:req.session.user})
+app.get("/cart", checkUser, (req, res) => {
+  res.render('clientui/cart', { cart: usercart, user: req.session.user })
 });
 
-app.get("/checkout", (req, res) => {
-  res.render('clientui/checkout');
+app.get('/order-details/:id',checkUser, async(req,res)=>{
+  var response = await axios.get(`http://localhost:3001/api/orders/ord/${req.params.id}`)
+  console.log(response.data)
+    res.render('clientui/order_detail',{ user: req.session.user,orders:response.data})
+})
+
+app.get("/checkout", checkUser, (req, res) => {
+  res.render('clientui/checkout',{user: req.session.user,cart:usercart,address:req.session.address });
 });
+
+app.post("/checkout",checkUser,(req,res)=>{
+  const { address } = req.body;
+  var order  = createOrder(usercart,address, 50, req)
+  res.json(order)
+})
 
 ////////////////////////
 //CLIENT END
