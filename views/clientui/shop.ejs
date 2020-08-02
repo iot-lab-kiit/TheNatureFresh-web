@@ -98,9 +98,8 @@
                     <hr>
                     <p><%= product.item_description%></p>
                     <p>No of Item in Cart :&nbsp;<b><span id = '<%- index %>'>0</span></b></p>
-                    <button data-product=1 data-action="add" class="btn btn-outline-secondary add-btn update-cart" onclick="addProduct('<%- index %>')">Add
-                        to Cart</button>
-                    <button data-product=1 data-action="remove" class="btn  btn-outline-secondary btn-danger add-btn update-cart " onclick="removeProduct('<%- index %>')">Remove Cart</button>
+                    <button data-product=1 data-action="add" class="btn btn-outline-secondary add-btn update-cart" onclick="addProduct('<%- index %>')"><font style="color:black"> + </font></button>
+                    <button data-product=1 data-action="remove" class="btn  btn-outline-secondary btn-danger add-btn update-cart " onclick="removeProduct('<%- index %>')"><font style="color:white"> - </font></button>
                     <h4 style="float: right"><strong>&#8377;<%= product.price%></strong></h4>
                 </div>
             </div>

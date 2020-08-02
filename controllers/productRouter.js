@@ -45,7 +45,7 @@ productRouter.post('/update/:id',async (req,res) => {
     batch.update(docRef,{price:price})
     batch.update(docRef,{qty_available:qty_available})
     await batch.commit();
-    res.send(201).send()
+    res.status(201).send('Success')
 } )
 
 productRouter.delete('/delete/:id',async (req,res) => {

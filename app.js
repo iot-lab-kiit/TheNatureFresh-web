@@ -180,7 +180,7 @@ app.get('/reroute', (req, res) => {
   if (req.session.role == "admin" && req.cookies.creds && req.session.user)
     res.redirect('/admin')
   else if (req.session.role == "user" && req.cookies.creds && req.session.user)
-    res.redirect('/client-profile')
+    res.redirect('/shop')
   else
     res.redirect('/signin')
 })
@@ -377,19 +377,19 @@ app.get("/client-profile", checkUser, async (req, res) => {
   res.render('clientui/profile', { user: req.session.user, address: req.session.address, orders: response.data })
 })
 
-app.get("/shop", checkUser, async (req, res) => {
+app.get("/shop" , async (req, res) => {
   var response = await axios.get(`${apihost}/api/products`)
   res.render('clientui/shop', { products: response.data, usercart: usercart, user: req.session.user })
 })
 
-app.post('/cart', checkUser, (req, res) => {
+app.post('/cart', (req, res) => {
   var { cart } = req.body
   // console.log(cart)
   usercart = cart
   res.status(200).json({ success: true })
 })
 
-app.get("/cart", checkUser, (req, res) => {
+app.get("/cart", (req, res) => {
   res.render('clientui/cart', { cart: usercart, user: req.session.user })
 })
 
@@ -422,7 +422,7 @@ app.get('/update-profile', checkUser, (req, res) => {
 
 
 app.get("/", (req, res) => {
-  res.redirect('/signin')
+  res.redirect('/shop')
 })
 
 app.get("/protected", checkAdmin, (req, res) => {

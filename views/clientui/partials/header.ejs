@@ -15,18 +15,30 @@
             <li>
                 <a class="nav-link active" href="/shop">Shop <span class="sr-only">(current)</span></a>
             </li>
-            <li class="nav-item active">
-                <a class="nav-link" href="/update-profile">Edit Profile</a>   
-            </li>
+            <% if(user){%>
+                <li class="nav-item active">
+                    <a class="nav-link" href="/update-profile">Edit Profile</a>   
+                </li>
+            <% } %>
+            
         </ul>
         <form class="form-inline active-pink-3 active-pink-4">
             <span class="btn"><i class="fas fa-search" aria-hidden="true"></i></span>
             <span><input class="form-control form-control-sm ml-3 w-75" type="text" placeholder="Search"
               aria-label="Search"></span>
         </form>
-        <span class="btn"><a onclick="gotoCart()"><i class="fa fa-shopping-cart" aria-hidden="true"></i></a></span>       
-        <span class="btn"><a href="/reroute"><i class="fa fa-user" aria-hidden="true"></i></a><font style="color:black;">&nbsp; Welcome <%= user.displayName %></font></span>
+        <span class="btn"><a onclick="gotoCart()" href="/cart"><i class="fa fa-shopping-cart"  style="color: black;" aria-hidden="true"></i></a></span>       
+        
+        <% if(user){%>
+            <span class="btn"><a href="/client-profile"><i class="fa fa-user" style="color: black;" aria-hidden="true"></i></a>
+                <font style="color:black;">&nbsp; Welcome <%= user.displayName %></font>        
+            </span>
+            <a href="/logout" class="btn-primary btn-dark btn-md btn" role="button">Logout</i></a>
+        <% } else {%>
+            <span class="btn"><a href="/signin"><i class="fa fa-user" style="color: black;"  aria-hidden="true"></i><font style="color:black;">&nbsp;LOGIN</font></a>
+                        
+            </span>
+        <% }%>
 
-        <a href="/logout" class="btn-primary btn-dark btn-lg btn" role="button">Logout</i></a>
     </div>
 </nav>
