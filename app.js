@@ -185,6 +185,16 @@ app.get('/reroute', (req, res) => {
     res.redirect('/signin')
 })
 
+app.get('/logout', (req, res) => {
+  if (req.session.user && req.cookies.creds) {
+      res.clearCookie('creds');
+      req.session = null;
+      res.redirect('/');
+  } else {
+      res.redirect('/reroute');
+  }
+});
+
 ////////////////
 // LOGIN END
 ////////////////
@@ -357,14 +367,19 @@ app.get("/cart", checkUser, (req, res) => {
 
 app.get('/order-details/:id', checkUser, async (req, res) => {
   var response = await axios.get(`${apihost}/api/orders/ord/${req.params.id}`)
-  // console.log(response.data)
-  res.render('clientui/order_detail', { user: req.session.user, orders: response.data })
+  if(response.data.user_id == req.session.user.uid)
+    res.render('clientui/order_detail', { user: req.session.user, orders: response.data })
+  else
+    res.send('Not authorised to view this order')
 })
 
-app.post('/updateStatus',async(req,res)=>{
-  const { id,status} = req.body;
-  var response = await axios.post(`${apihost}/api/orders/status/${id}`,status)
-  res.status(200).json({success:response})
+app.get('/updateStatus/:id/:status',async(req,res)=>{
+  const id = req.params.id
+  const status = req.params.status
+  console.log(id,status)
+  var obj = {orderStatus:status}
+  var response = await axios.post(`${apihost}/api/orders/status/${id}`,obj)
+  res.status(200).send(response.data)
 })
 
 app.get("/checkout", checkUser, (req, res) => {

@@ -32,8 +32,9 @@ orderRouter.post('/create', async(req,res)=>{
 
 orderRouter.post('/status/:id',async (req,res)=>{
     const status = req.body;
+    console.log(req.params.id,status)
     var result = await updateStatus(req.params.id,status);
-    res.json(result)
+    result == true ? res.status(200).json({success:1}) :  res.status(400).json({success:0})
 })
 
 module.exports = orderRouter

@@ -19,7 +19,6 @@
             <tr>
                 <th scope="col">OrderID</th>
                 <th scope="col">Total Price</th>
-                <th scope="col">Purchase Day</th>
                 <th scope="col">Purchase Date</th>
                 <th scope="col">Order Status</th>
                 <th scope="col">Operations</th>
@@ -30,14 +29,11 @@
                 <tr>
                     <th scope="row"><%= order.orderid %></th>
                     <td> ₹ <%= order.total %></td>
-                    <td><%= order.order_day.split(' ')[0] %></td>
                     <td>
-                        <%= order.order_day.split(' ')[2] + " " 
-                            + order.order_day.split(' ')[1] + " " 
-                            + order.order_day.split(' ')[3] %>
+                        <%= order.order_day %>
                     </td>
                     <td>
-                        <select name="orderStatus" class="p-1" onchange="document.getElementById('updateOrder<%=index+1%>' ).style.display = 'inline'">
+                        <select id = '<%= order.id %>' name="orderStatus" class="p-1" onchange="document.getElementById('updateOrder<%=index+1%>' ).style.display = 'inline'">
                             <option value="Confirmed" <% if(order.orderStatus === 'Confirmed') { %> selected <% } %> >
                                 Confirmed
                             </option>
@@ -52,7 +48,7 @@
                     </td>
                     <td>
                         </a><button type="button" class="btn btn-sm btn-danger">Delete</button>
-                        <button id="updateOrder<%=index+1%>" type="button" style="display: none;" class="btn btn-sm btn-warning">Update</button>
+                        <button id="updateOrder<%=index+1%>" type="button" style="display: none;" class="btn btn-sm btn-warning" onclick="setStatus('<%= order.id %>')">Update</button>
                     </td>
                 </tr>
             <% }) %>
@@ -70,6 +66,28 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"
         integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI"
         crossorigin="anonymous"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <script>
+            var id;
+            var status;
+            function setStatus(id) {
+                console.log(id)
+                status = document.getElementById(id).value
+                url = `/updateStatus/${id}/${status}`
+              $.ajax({
+                  url: url,
+                  success: function (result) {
+                     if(result['success']==1){
+                        document.getElementById(id).value = status
+                        alert('Updated Successfully')  
+                     }
+                     else{
+                         alert('Some error occured')
+                     }
+                  },
+              });
+          }
+        </script>
 </body>
 
 </html>

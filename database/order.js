@@ -1,6 +1,6 @@
 const database = require('./dbinit')
 const db = database.db
-
+var admin = require("firebase-admin")
 const getOrders = async () => {
     try {
         const orders = []
@@ -36,11 +36,17 @@ const createOrder = async order => {
             console.log('Transaction failure:', e);
         }
     })
+    const dataRef = await (await db.collection('references').doc('orders').get('orderId')).data()
+    const orderid = dataRef.orderId 
+    console.log(orderid)
+    const increment = admin.firestore.FieldValue.increment(1)
     const document = db.collection('orders').doc()
     document.create({
         id: document.id,
+        orderid : orderid,
         ...order
     })
+    const updateRef = db.collection('references').doc('orders').update({orderId:increment})
     return order
 }
 
@@ -67,7 +73,7 @@ const getOrderByOrderID = async (id) => {
         const order = []
         const snap = await db
             .collection("orders")
-            .where("orderid", "==", id)
+            .where("orderid", "==", parseInt(id))
             .get();
         snap.forEach((doc) => {
             order.push(doc.data())
@@ -84,7 +90,6 @@ const updateStatus = async (id, status) => {
     try {
         const Ref = db.collection('orders').doc(id)
         const res = await Ref.update(status)
-        console.log(res)
         return true
     } catch (error) {
         console.log(error)
