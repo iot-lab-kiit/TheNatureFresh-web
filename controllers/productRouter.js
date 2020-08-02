@@ -4,7 +4,7 @@ const database = require('../database/dbinit')
 const db = database.db
 
 productRouter.get('/',async (req,res) => {
-    console.log('get all products')
+    // console.log('get all products')
     const snapshots = await db.collection('products').get();
     let products = []
     snapshots.forEach(snapshot => {
@@ -15,7 +15,7 @@ productRouter.get('/',async (req,res) => {
 })
 
 productRouter.post('/add',async (req,res) => {
-    console.log('add product')
+    // console.log('add product')
     const product = req.body;
     const document = await db.collection('products').doc()
     await document.set({
@@ -26,8 +26,8 @@ productRouter.post('/add',async (req,res) => {
 })
 
 productRouter.post('/update/:id',async (req,res) => {
-    console.log('get update product')
-    console.log(req.body)
+    // console.log('get update product')
+    // console.log(req.body)
     const itemId = req.params.id
     if(!itemId){
         res.status(401).json({error:'Id not provided'})
@@ -49,7 +49,7 @@ productRouter.post('/update/:id',async (req,res) => {
 } )
 
 productRouter.delete('/delete/:id',async (req,res) => {
-    console.log('delete product')
+    // console.log('delete product')
     const itemId = req.params.id
     if(!itemId){
         res.status(401).json({error:"ID not provided"})
@@ -58,7 +58,7 @@ productRouter.delete('/delete/:id',async (req,res) => {
 })
 
 productRouter.get('/details/:id',async (req,res)=>{
-    console.log('get product by id')
+    // console.log('get product by id')
     const id = req.params.id;
     const product = await getProductByID(id)
     res.json(product)

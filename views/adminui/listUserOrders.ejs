@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <%- include("partials/head") %>
+</head>
+
+<body>
+    <header>
+        <%- include("partials/header") %>
+    </header>
+    <br />
+    <div class="container">
+        <div class="jumbotron">
+            <div class="row-lg-12 d-flex justify-content-center" >
+                <div class="col-lg-12 sm-4 md-8">
+                    <table class="table">
+                        <h6><strong></strong><h2>Orders</h2> </h6><br>
+                        <thead class="thead-dark">
+                            <tr>
+                                <th scope="col">S.No</th>
+                                <th scope="col">OrderID</th>
+                                <th scope="col">Date</th>
+                                <th scope="col">Items</th>
+                                <th scope="col">Address</th>
+                                <th scope="col">Total</th>
+                                <th scope="col">Status</th>
+                                <th scope="col">Operations</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% orders.forEach(function(order,index){ %>
+                                <tr>
+                                    <td><%= index+1 %></td>
+                                    <td><%= order.orderid %></td>
+                                    <td><%= order.order_day %></td>
+                                    <td>
+                                        <% order.cart.products.forEach(function(product){%>
+                                        <%= product.qty_purchased %> X <%= product.item_name %> <br>
+                                        <% })%>
+                                    </td>
+                                    <td><%= order.address %></td>
+                                    <td><%= order.total %></td>
+                                    <td><%= order.orderStatus %></td>
+                                    <td>
+                                        <a href="/admin-order-details/<%= order.orderid %>"><button type="button" class="btn btn-sm btn-warning">Details</button></a>
+                                    </td>
+                                </tr>
+                            <% })%>
+                            </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+    integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+    crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+    integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+    crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"
+    integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI"
+    crossorigin="anonymous"></script>
+</body>
+
+</html>

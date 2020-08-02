@@ -4,7 +4,7 @@ var admin = require("firebase-admin")
 const getOrders = async () => {
     try {
         const orders = []
-        const snapshot = await db.collection('orders').get();
+        const snapshot = await db.collection('orders').get()
         snapshot.forEach(order => {
             orders.push(order.data())
         })

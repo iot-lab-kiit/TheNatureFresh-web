@@ -56,13 +56,13 @@
                 document.getElementById(index).innerHTML=1;
             }
             cart.itemCount++
-            console.log(cart)
+            // console.log(cart)
         }
 
         const removeProduct = index => {
             const i = cart.products.findIndex( item => item.id === test[index].id)
             if( i === -1 ){
-                console.log('Item not in cart')
+                // console.log('Item not in cart')
                 return
             }
             else if (cart.products[i].qty_purchased <= 1){
@@ -74,7 +74,7 @@
                 document.getElementById(index).innerHTML=cart.products[i].qty_purchased;
             }
             cart.itemCount--
-            console.log(cart)
+            // console.log(cart)
             
         }
     </script>

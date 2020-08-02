@@ -18,6 +18,7 @@
         <thead class="thead-dark">
             <tr>
                 <th scope="col">OrderID</th>
+                <th scope="col">Phone Number</th>
                 <th scope="col">Total Price</th>
                 <th scope="col">Purchase Date</th>
                 <th scope="col">Order Status</th>
@@ -28,6 +29,7 @@
             <% orders.forEach((order, index) => { %>
                 <tr>
                     <th scope="row"><%= order.orderid %></th>
+                    <td><%= order.phone_number %></td>
                     <td> ₹ <%= order.total %></td>
                     <td>
                         <%= order.order_day %>

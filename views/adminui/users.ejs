@@ -22,43 +22,32 @@
                     <th scope="col">Name</th>
                     <th scope="col">Jate Joined</th>
                     <th scope="col">Email</th>
+                    <th scope="col">Number</th>
+
                     <th scope="col">Operations</th>
                 </tr>
             </thead>
             <tbody>
+
+                <% list.forEach(function(user){ %>
                 <tr>
-                    <th scope="row">
-                        <img src="images/profile.webp" style="width: 100px; height: 65px;" alt="Cantharel" />
-                    </th>
-                    <td>John Doe</td>
-                    <td>29/0702020</td>
-                    <td>johndoe@example.com</td>
                     <td>
-                        <a href="/profile"><button type="button" class="btn btn-lg btn-block btn-info">View</button></a>
+                    <% if(user.photoURL!=null){%>
+                        <img src="<%= user.photoURL %>" style="width: 100px; height: 100px;" alt="profile image">
+                    <% } else {%>
+                        <img src="images/profile.webp" style="width: 100px; height: 100px;" alt="profile image">
+                    <% }%>
                     </td>
-                </tr>
-                <tr>
-                    <th scope="row">
-                        <img src="images/profile.webp" style="width: 100px; height: 65px;" alt="Cantharel" />
-                    </th>
-                    <td>John Doe</td>
-                    <td>29/0702020</td>
-                    <td>johndoe@example.com</td>
+                    <td><%= user.displayName %></td>
+                    <td><%= user.metadata.creationTime %></td>
+                    <td><%= user.email %></td>
+                    <td><%= user.phoneNumber %></td>
                     <td>
-                        <a href="/profile"><button type="button" class="btn btn-lg btn-block btn-info">View</button></a>
+                        <a href="/userOrders/<%= user.uid %>"><button type="button" class="btn btn-lg btn-block btn-info">View Orders</button></a>
                     </td>
-                </tr>
-                <tr>
-                    <th scope="row">
-                        <img src="images/profile.webp" style="width: 100px; height: 65px;" alt="Cantharel" />
-                    </th>
-                    <td>John Doe</td>
-                    <td>29/0702020</td>
-                    <td>johndoe@example.com</td>
-                    <td>
-                        <a href="/profile"><button type="button" class="btn btn-lg btn-block btn-info">View</button></a>
-                    </td>
-                </tr>
+                </tr> 
+                <% }) %>
+
             </tbody>
         </table>
 

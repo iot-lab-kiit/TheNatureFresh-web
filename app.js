@@ -214,11 +214,25 @@ app.get("/create-item", checkAdmin, async (req, res) => {
 
 app.get("/orders", checkAdmin, async (req, res) => {
   var response = await axios.get(`${apihost}/api/orders/`)
-  // console.log(response.data)
   res.render('adminui/orders', { orders: response.data, user: req.session.user })
 })
 
-app.post("/create-item", upload, async (req, res) => {
+app.get('/updateStatus/:id/:status', checkAdmin, async(req,res)=>{
+  const id = req.params.id
+  const status = req.params.status
+  // console.log(id,status)
+  var obj = {orderStatus:status}
+  var response = await axios.post(`${apihost}/api/orders/status/${id}`,obj)
+  res.status(200).send(response.data)
+})
+
+
+app.get("/allOrders", checkAdmin , async (req, res) => {
+  var response = await axios.get(`${apihost}/api/orders/`)
+  res.render('adminui/listUserOrders', { user: req.session.user, orders: response.data })
+})
+
+app.post("/create-item",checkAdmin,upload,async (req, res) => {
   const {
     name,
     price,
@@ -242,6 +256,8 @@ app.post("/create-item", upload, async (req, res) => {
     console.error(e)
   }
 })
+
+
 
 app.get("/edit-item/:id", checkAdmin, async (req, res) => {
   var response = await axios.get(`${apihost}/api/products/details/${req.params.id}`)
@@ -267,12 +283,24 @@ app.post("/edit-item/", checkAdmin, async (req, res) => {
   res.redirect('/admin')
 })
 
-app.get("/edit-order", (req, res) => {
-  res.render('adminui/edit_order', { user: req.session.user })
+app.get("/users",checkAdmin, async (req, res) => {
+  var users = []
+  const response = await admin.auth().listUsers()
+  response.users.forEach(function(userRecord) {
+    var single = userRecord.toJSON()
+    users.push(single)
+  })
+  res.render('adminui/users', { user: req.session.user,list:users })
 })
 
-app.get("/users", (req, res) => {
-  res.render('adminui/users', { user: req.session.user })
+app.get("/userOrders/:id", checkAdmin , async (req, res) => {
+  var response = await axios.get(`${apihost}/api/orders/${req.params.id}`)
+  res.render('adminui/listUserOrders', { user: req.session.user, orders: response.data })
+})
+
+app.get('/admin-order-details/:id', checkAdmin, async (req, res) => {
+  var response = await axios.get(`${apihost}/api/orders/ord/${req.params.id}`)
+    res.render('adminui/order_detail', { user: req.session.user, orders: response.data })
 })
 
 app.get("/profile", (req, res) => {
@@ -356,7 +384,7 @@ app.get("/shop", checkUser, async (req, res) => {
 
 app.post('/cart', checkUser, (req, res) => {
   var { cart } = req.body
-  console.log(cart)
+  // console.log(cart)
   usercart = cart
   res.status(200).json({ success: true })
 })
@@ -371,15 +399,6 @@ app.get('/order-details/:id', checkUser, async (req, res) => {
     res.render('clientui/order_detail', { user: req.session.user, orders: response.data })
   else
     res.send('Not authorised to view this order')
-})
-
-app.get('/updateStatus/:id/:status',async(req,res)=>{
-  const id = req.params.id
-  const status = req.params.status
-  console.log(id,status)
-  var obj = {orderStatus:status}
-  var response = await axios.post(`${apihost}/api/orders/status/${id}`,obj)
-  res.status(200).send(response.data)
 })
 
 app.get("/checkout", checkUser, (req, res) => {
