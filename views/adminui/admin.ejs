@@ -36,9 +36,11 @@
                     <td><%= product.item_description%></td>
                     <td><%= product.price%></td>
                     <td><%= product.qty_available%></td>
-                    <td>
-                        <a href="/edit-item/<%= product.id %>"><button type="button" class="btn btn-sm btn-warning">Edit</button></a>
-                        <a href="/delete-item/<%= product.id %>"><button type="button" class="btn btn-sm btn-danger">Delete</button></a>
+                    <td class="p-0 pt-3">
+                        <div>
+                            <a href="/edit-item/<%= product.id %>"><button type="button" class="btn btn-sm btn-warning">Edit</button></a>
+                            <a href="/delete-item/<%= product.id %>"><button type="button" class="btn btn-sm btn-danger">Delete</button></a>
+                        </div>
                     </td>
                 </tr>
             <% })%>

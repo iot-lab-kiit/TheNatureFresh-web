@@ -12,7 +12,8 @@
 <style>
     * {
         color: white;
-        outline: none;
+        outline: transparent !important;
+        box-shadow: none !important;
     }
 
     input[type = text],
@@ -25,13 +26,23 @@
         margin-bottom: 10px;
     }
 
-    button[type = submit] {
+    input[type = text]:focus {
+        background-color: transparent !important;
+    }
+
+    #fakeSubmit,
+    label[for = file] {
         border: 2px solid white;
         border-radius: 10px;
     }
 
+    label[for = file]::after {
+        border-top-right-radius: 7px;
+        border-bottom-right-radius: 7px;
+    }
+
     ::placeholder {
-        color: white;
+        color: white !important;
     }
 
     #overlayDiv {
@@ -47,15 +58,25 @@
                 <div class="p-5" id="overlayDiv">
                     <h1 class="mb-4">Sign Up</h1>
                     <form method="POST" action="/signup" enctype="multipart/form-data">
-                        <input type="text" name="firstName" placeholder="First Name" class="p-2" /><input type="text" name="lastName" placeholder="Last Name" class="p-2" /><br>
-                        <input type="email" name="email" placeholder="Email" class="p-2" /><br>
-                        <input type="password" name="password" placeholder="Password" class="p-2" />
-                        <input type="text" name="phoneNumber" placeholder="Number" class="p-2" />
+                        <input type="text" name="firstName" placeholder="First Name" class="p-2" required />
+                        <input type="text" name="lastName" placeholder="Last Name" class="p-2" required /><br>
+                        <input type="email" name="email" placeholder="Email" class="p-2" required /><br>
+                        <input type="password" name="password" placeholder="Password" class="p-2" required />
+                        <!-- <input type="text" name="phoneNumber" placeholder="Number" class="p-2" required /> -->
+                        <div class="input-group mb-2" style="width: 100%;">
+                            <div class="input-group-prepend">
+                              <span class="input-group-text text-dark">+91</span>
+                            </div>
+                            <input type="text" class="form-control" id="phoneNumber" name="phoneNumber" placeholder="Phone No.">
+                        </div>
                         <input type="text" name="urole" placeholder="Role" class="p-2" value="user" hidden/>
-                        <input type="text" name="uaddress" placeholder="Address" class="p-2" />
-                        <label for="file">Choose Image file</label>
-                        <input type="file" name="image" id="file">
-                        <center><button type="submit" class="btn btn-outline-light mt-4 px-3">SUBMIT</button></center>
+                        <input type="text" name="uaddress" placeholder="Address" class="p-2" required />
+                        <div class="custom-file">
+                            <input type="file" class="custom-file-input" name="image" id="file" required>
+                            <label class="custom-file-label bg-transparent text-light" for="file">Choose Profile Image</label>
+                        </div>
+                        <center><button class="btn btn-outline-light mt-4 px-3" id="fakeSubmit" onclick="handleSubmit(event)">SUBMIT</button></center>
+                        <center><button type="submit" class="btn btn-outline-light mt-4 px-3" id="realSubmit" style="display: none;">Hidden</button></center>
                     </form>
                     <br>
                     <center><a href="/signin" class="btn-primary btn-dark btn-md btn" role="button">Old User? Sign In</i></a></center>
@@ -63,5 +84,48 @@
             </div>
         </div>
     </div>
+
+    <div aria-live="polite" aria-atomic="true" class="d-flex justify-content-center align-items-center text-dark" style="min-height: 200px; position: absolute; top: 0; right: 50px;">
+        <div class="toast bg-dark" role="alert" aria-live="assertive" aria-atomic="true" data-autohide="false">
+          <div class="toast-header bg-dark">
+            <strong class="mr-auto">Error</strong>
+            <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="toast-body">
+             <%= message %>
+          </div>
+        </div>
+      </div>
+      
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+        integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+        integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"
+        integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI"
+        crossorigin="anonymous"></script>
+    <script>
+
+        var mess = '<%- message %>'
+        if(mess!='false'){
+            $(document).ready(function(){
+                $('.toast').toast('show');
+            });
+        }
+        $(".custom-file-input").on("change", function() {
+            var fileName = $(this).val().split("\\").pop();
+            $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
+        });
+
+        function handleSubmit(event) {
+            event.preventDefault()            
+            document.getElementById('phoneNumber').value = '+91' + document.getElementById('phoneNumber').value
+            document.getElementById('realSubmit').click()
+        }
+    </script>
 </body>
 </html>

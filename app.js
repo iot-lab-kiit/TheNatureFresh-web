@@ -96,17 +96,17 @@ app.get('/signup', (req, res) => {
   if (req.session.user && req.cookies.creds)
     res.redirect('/reroute')
   else
-    res.render('signup.ejs')
+    res.render('signup.ejs',{message:false})
 })
 
 app.get('/signin', (req, res) => {
   if (req.session.user && req.cookies.creds)
     res.redirect('/reroute')
   else
-    res.render('signin.ejs')
+    res.render('signin.ejs',{message:false})
 })
 
-app.post("/signup", upload, async (req, res) => {
+app.post("/signup", upload ,async (req, res) => {
   try {
     var bytes = new Uint8Array(req.file.buffer)
     var storageRef = storage.child(req.file.originalname)
@@ -144,14 +144,15 @@ app.post("/signup", upload, async (req, res) => {
         role: urole,
         address: uaddress,
       })
-
+      console.log('idhar aya')
       res.redirect('/signin')
     })
     .catch((err) => {
       console.error(err)
-      res.json(err)
+      res.render('signup', {message: err.message})
     })
 })
+
 
 app.post("/signin", async (req, res) => {
   const { email, password } = req.body
@@ -172,7 +173,7 @@ app.post("/signin", async (req, res) => {
     res.redirect("/reroute")
   } catch (err) {
     console.error("Signin Error!")
-    res.json(err)
+    res.render('signin', {message: err.message})
   }
 })
 

@@ -17,11 +17,11 @@
     <form method="POST" action="/create-item" enctype="multipart/form-data">
         <div class="form-group">
             <label for="name">Name:</label>
-            <input type="text" class="form-control" id="name" name="name" />
+            <input type="text" class="form-control" id="name" name="name" required/>
         </div>
         <div class="form-group">
             <label for="price">Price in &#8377;:</label>
-            <input type="number" class="form-control" id="price" name="price" />
+            <input type="number" class="form-control" id="price" name="price" required/>
         </div>
         <div class="form-group">
             <label for="description">Description:</label>
@@ -29,11 +29,11 @@
         </div>
         <div class="form-group">
             <label for="quantity">Qyantity In KGs:</label>
-            <input type="number" class="form-control" id="quantity" name="quantity" />
+            <input type="number" class="form-control" id="quantity" name="quantity" required/>
         </div>
         <div class="custom-file">
             <label class="custom-file-label" for="file">Choose Image file</label>
-            <input type="file" name="image" class="custom-file-input" id="file">
+            <input type="file" name="image" class="custom-file-input" id="file" required>
         </div>
         <br><br>
         <center><button type="submit" class="btn btn-primary my-4">Submit</button></center>
@@ -51,12 +51,12 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"
         integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI"
         crossorigin="anonymous"></script>
-        <script>
-            $(".custom-file-input").on("change", function () {
-                var fileName = $(this).val().split("\\").pop();
-                $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
-            });
-        </script>
+    <script>
+        $(".custom-file-input").on("change", function () {
+            var fileName = $(this).val().split("\\").pop();
+            $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
+        });
+    </script>
 </body>
 
 </html>
