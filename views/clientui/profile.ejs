@@ -1,10 +1,21 @@
+
+
+
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
     <%- include("partials/head") %>
 </head>
+<style>
+    table, tr, td, thead, tbody {
+        border: 1px solid gray;
+    }
 
+    ::-webkit-scrollbar{
+        display: none;
+    }
+</style>
 <body>
     <header>
         <%- include("partials/header") %>
@@ -12,21 +23,23 @@
     <br />
     <br />
     <div class="container">
-        <div class="jumbotron">
-            <div class="row-lg-12 text-center">
+        <div class="jumbotron" style="background-image: url('/images/BG-1.jpg'); background-position: center; background-size: cover;">
+            <br><br><br><br><br><br><br>
+            <div class="row-lg-12 text-center mx-auto" style="position: absolute; left: 0; right: 0;">
                 <% if(user.photoURL!=null){%>
-                <img src="<%= user.photoURL %>" style="width: 150px; height: 150px;" alt="John Doe">
+                    <img src="<%= user.photoURL %>" style="width: 130px; height: 130px; object-fit: cover; object-position: top; border: 4px solid white;" alt="John Doe" class="card-img-top rounded-circle">
                 <% } else {%>
-                    <img src="images/profile.webp" style="width: 150px; height: 150px;" alt="John Doe">
+                    <img src="images/profile.webp" style="width: 130px; height: 130px; object-fit: cover; object-position: top; border: 4px solid white;" alt="John Doe" class="card-img-top rounded-circle">
                     <% }%>
-                <h1 class="display-3 p-3"><%= user.displayName %></h1>
+                <h3 class="display-4 p-3"><%= user.displayName %></h3>
             </div>
-            <br><br>
-            <div class="row-lg-12 d-flex justify-content-center" >
-                <div class="col-lg-8 ">
-                    <h6><strong></strong>EMAIL<span style="float: right;">&nbsp;<%=user.email %></span></h6><br>
-                    <h6><strong></strong>PHONE NUMBER<span style="float: right;">&nbsp;<%=user.phoneNumber %></span></h6><br>
-                    <h6><strong></strong>ADDRESS<span style="float: right;">&nbsp;<%= address %></span></h6><br>
+        </div>
+        <br><br>
+            <div class="row-lg-12 d-flex justify-content-center" style="margin-top: 80px;">
+                <div class="col-lg-8 bg-secondary p-4 text-light" style="border-radius: 15px;">
+                    <h6><strong>EMAIL</strong><span style="float: right;">&nbsp;<%=user.email %></span></h6><br>
+                    <h6><strong>PHONE NUMBER</strong><span style="float: right;">&nbsp;<%= num %></span></h6><br>
+                    <h6><strong>ADDRESS</strong><span style="float: right;">&nbsp;<%= address %></span></h6>
                 </div>
             </div>
             <div class="row-lg-12 d-flex justify-content-center" >
@@ -34,7 +47,7 @@
                     <table class="table">
                         <h6><strong></strong><h2>Orders</h2> </h6><br>
                         <thead class="thead-dark">
-                            <tr>
+                            <tr style="text-align: center;">
                                 <th scope="col">S.No</th>
                                 <th scope="col">OrderID</th>
                                 <th scope="col">Date</th>
@@ -54,8 +67,8 @@
                                 <% }%>
 
 
-                            <% orders.forEach(function(order,index){ %>
-                                <tr>
+                            <% orders.forEach((order,index) => { %>
+                                <tr style="background-color: rgb(219, 219, 219); text-align: center;">
                                     <td><%= index+1 %></td>
                                     <td><%= order.orderid %></td>
                                     <td><%= order.order_day %></td>
@@ -76,7 +89,6 @@
                     </table>
                 </div>
             </div>
-        </div>
     </div>
 
     <%- include ("partials/footer") %>

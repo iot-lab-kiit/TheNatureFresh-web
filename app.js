@@ -66,14 +66,15 @@ const checkAdmin = (req, res, next) => {
 }
 
 const checkUser = (req, res, next) => {
-  if (req.session.role == "user" && req.cookies.creds && req.session.user)
+  if (req.session.role == "user" && req.cookies.creds && req.session.user )
     next()
   else res.redirect('/reroute')
 }
 
-const checkLogin = (req, res, next) => {
-  if (req.session.user && req.cookies.creds) next()
-  else res.redirect('/reroute')
+const checkDetails = (req, res, next) => {
+  if (req.session.address!=null && req.session.num!=null)
+   next()
+  else res.redirect('/update-profile')
 }
 
 let upload = multer({
@@ -96,17 +97,17 @@ app.get('/signup', (req, res) => {
   if (req.session.user && req.cookies.creds)
     res.redirect('/reroute')
   else
-    res.render('signup.ejs',{message:false})
+    res.render('signup.ejs', { message: false })
 })
 
 app.get('/signin', (req, res) => {
   if (req.session.user && req.cookies.creds)
     res.redirect('/reroute')
   else
-    res.render('signin.ejs',{message:false})
+    res.render('signin.ejs', { message: false })
 })
 
-app.post("/signup", upload ,async (req, res) => {
+app.post("/signup", upload, async (req, res) => {
   try {
     var bytes = new Uint8Array(req.file.buffer)
     var storageRef = storage.child(req.file.originalname)
@@ -143,12 +144,13 @@ app.post("/signup", upload ,async (req, res) => {
         uid: user.uid,
         role: urole,
         address: uaddress,
+        phone_number:phoneNumber
       })
       res.redirect('/signin')
     })
     .catch((err) => {
       console.error(err)
-      res.render('signup', {message: err.message})
+      res.render('signup', { message: err.message })
     })
 })
 
@@ -165,14 +167,16 @@ app.post("/signin", async (req, res) => {
     snap.forEach((doc) => {
       frole = doc.data().role
       fadd = doc.data().address
+      fnum = doc.data().phone_number
     })
     req.session.user = user.user
     req.session.role = frole
     req.session.address = fadd
+    req.session.num = fnum
     res.redirect("/reroute")
   } catch (err) {
     console.error("Signin Error!")
-    res.render('signin', {message: err.message})
+    res.render('signin', { message: err.message })
   }
 })
 
@@ -187,13 +191,56 @@ app.get('/reroute', (req, res) => {
 
 app.get('/logout', (req, res) => {
   if (req.session.user && req.cookies.creds) {
-      res.clearCookie('creds');
-      req.session = null;
-      res.redirect('/');
+    res.clearCookie('creds');
+    req.session = null;
+    res.redirect('/');
   } else {
-      res.redirect('/reroute');
+    res.redirect('/reroute');
   }
 });
+
+app.post('/updateDetails', checkUser, async (req, res) => {
+  var id = req.session.user.uid;
+  const { name, password, phoneNumber, address } = req.body;
+  try {
+    if (password != '') {
+      var response = await admin.auth().updateUser(id, {
+        phoneNumber: phoneNumber,
+        password: password,
+        displayName: name,
+      })
+      req.session.user = response
+      req.session.num = phoneNumber
+    }
+    else {
+      var response = await admin.auth().updateUser(id, {
+        phoneNumber: phoneNumber,
+        displayName: name,
+      })
+      req.session.user = response
+      req.session.num = phoneNumber
+    }
+  } catch (error) {
+    console.log(error)
+    res.render('clientui/edit_profile', { user: req.session.user, num:req.session.num, address: req.session.address, message: error.message })
+  }
+
+  try {
+    const Ref = await db
+      .collection("users")
+      .where("uid", "==", id).get()
+    Ref.docs.forEach((doc) => {
+      const docRef = db.collection('users').doc(doc.id).update({ address: address })
+      const docRef2 = db.collection('users').doc(doc.id).update({ phone_number: phoneNumber })
+    })
+    req.session.address = address
+  } catch (error) {
+    console.log(error)
+    res.render('clientui/edit_profile', { user: req.session.user, num:req.session.num, address: req.session.address, message: error.message })
+
+  }
+  res.render('clientui/edit_profile', { user: req.session.user, num:req.session.num, address: req.session.address, message: 'Sucessfully Updated' })
+})
 
 ////////////////
 // LOGIN END
@@ -217,22 +264,22 @@ app.get("/orders", checkAdmin, async (req, res) => {
   res.render('adminui/orders', { orders: response.data, user: req.session.user })
 })
 
-app.get('/updateStatus/:id/:status', checkAdmin, async(req,res)=>{
+app.get('/updateStatus/:id/:status', checkAdmin, async (req, res) => {
   const id = req.params.id
   const status = req.params.status
   // console.log(id,status)
-  var obj = {orderStatus:status}
-  var response = await axios.post(`${apihost}/api/orders/status/${id}`,obj)
+  var obj = { orderStatus: status }
+  var response = await axios.post(`${apihost}/api/orders/status/${id}`, obj)
   res.status(200).send(response.data)
 })
 
 
-app.get("/allOrders", checkAdmin , async (req, res) => {
+app.get("/allOrders", checkAdmin, async (req, res) => {
   var response = await axios.get(`${apihost}/api/orders/`)
-  res.render('adminui/listUserOrders', { user: req.session.user, orders: response.data })
+  res.render('adminui/listUserOrders', { user: req.session.user, num:req.session.num, orders: response.data })
 })
 
-app.post("/create-item",checkAdmin,upload,async (req, res) => {
+app.post("/create-item", checkAdmin, upload, async (req, res) => {
   const {
     name,
     price,
@@ -262,7 +309,7 @@ app.post("/create-item",checkAdmin,upload,async (req, res) => {
 app.get("/edit-item/:id", checkAdmin, async (req, res) => {
   var response = await axios.get(`${apihost}/api/products/details/${req.params.id}`)
   // console.log(response.data)
-  res.render('adminui/edit_item', { user: req.session.user, product: response.data })
+  res.render('adminui/edit_item', { user: req.session.user, num:req.session.num, product: response.data })
 })
 
 app.post("/edit-item/", checkAdmin, async (req, res) => {
@@ -283,24 +330,24 @@ app.post("/edit-item/", checkAdmin, async (req, res) => {
   res.redirect('/admin')
 })
 
-app.get("/users",checkAdmin, async (req, res) => {
+app.get("/users", checkAdmin, async (req, res) => {
   var users = []
   const response = await admin.auth().listUsers()
-  response.users.forEach(function(userRecord) {
+  response.users.forEach(function (userRecord) {
     var single = userRecord.toJSON()
     users.push(single)
   })
-  res.render('adminui/users', { user: req.session.user,list:users })
+  res.render('adminui/users', { user: req.session.user, num:req.session.num, list: users })
 })
 
-app.get("/userOrders/:id", checkAdmin , async (req, res) => {
+app.get("/userOrders/:id", checkAdmin, async (req, res) => {
   var response = await axios.get(`${apihost}/api/orders/${req.params.id}`)
-  res.render('adminui/listUserOrders', { user: req.session.user, orders: response.data })
+  res.render('adminui/listUserOrders', { user: req.session.user, num:req.session.num, orders: response.data })
 })
 
 app.get('/admin-order-details/:id', checkAdmin, async (req, res) => {
   var response = await axios.get(`${apihost}/api/orders/ord/${req.params.id}`)
-    res.render('adminui/order_detail', { user: req.session.user, orders: response.data })
+  res.render('adminui/order_detail', { user: req.session.user, num:req.session.num, orders: response.data })
 })
 
 app.get("/profile", (req, res) => {
@@ -321,6 +368,13 @@ var usercart = {
   itemCount: 0
 }
 
+const clearCart = () =>{
+  usercart = {
+    products: [],
+    itemCount: 0
+  }
+}
+
 const createOrder = (cart, add, del_chrgs, req) => {
   const {
     itemCount,
@@ -337,14 +391,14 @@ const createOrder = (cart, add, del_chrgs, req) => {
       qty_available,
       qty_purchased
     } = product;
-    var newObj = { 
-      price: parseFloat(price), 
-      item_name: item_name, 
-      image_url: image_url, 
-      item_description: item_description, 
-      id: id, 
-      qty_available: parseFloat(qty_available), 
-      qty_purchased: parseFloat(qty_purchased) 
+    var newObj = {
+      price: parseFloat(price),
+      item_name: item_name,
+      image_url: image_url,
+      item_description: item_description,
+      id: id,
+      qty_available: parseFloat(qty_available),
+      qty_purchased: parseFloat(qty_purchased)
     }
     newcart.push(newObj)
   })
@@ -357,7 +411,7 @@ const createOrder = (cart, add, del_chrgs, req) => {
   })
   var order = {
     user_id: req.session.user.uid,
-    phone_number: parseFloat(req.session.user.phoneNumber),
+    phone_number: req.session.num,
     address: add,
     order_date: ord_date,
     order_day: new Date().toDateString(),
@@ -372,12 +426,13 @@ const createOrder = (cart, add, del_chrgs, req) => {
   return (order)
 }
 
-app.get("/client-profile", checkUser, async (req, res) => {
+app.get("/client-profile", checkUser,checkDetails, async (req, res) => {
+  clearCart()
   var response = await axios.get(`${apihost}/api/orders/${req.session.user.uid}`)
-  res.render('clientui/profile', { user: req.session.user, address: req.session.address, orders: response.data })
+  res.render('clientui/profile', { user: req.session.user, num:req.session.num, address: req.session.address, orders: response.data })
 })
 
-app.get("/shop" , async (req, res) => {
+app.get("/shop", async (req, res) => {
   var response = await axios.get(`${apihost}/api/products`)
   res.render('clientui/shop', { products: response.data, usercart: usercart, user: req.session.user })
 })
@@ -393,19 +448,19 @@ app.get("/cart", (req, res) => {
   res.render('clientui/cart', { cart: usercart, user: req.session.user })
 })
 
-app.get('/order-details/:id', checkUser, async (req, res) => {
+app.get('/order-details/:id', checkUser,checkDetails, async (req, res) => {
   var response = await axios.get(`${apihost}/api/orders/ord/${req.params.id}`)
-  if(response.data.user_id == req.session.user.uid)
-    res.render('clientui/order_detail', { user: req.session.user, orders: response.data })
+  if (response.data.user_id == req.session.user.uid)
+    res.render('clientui/order_detail', { user: req.session.user, num:req.session.num, orders: response.data })
   else
     res.send('Not authorised to view this order')
 })
 
-app.get("/checkout", checkUser, (req, res) => {
-  res.render('clientui/checkout', { user: req.session.user, cart: usercart, address: req.session.address })
+app.get("/checkout", checkUser,checkDetails, (req, res) => {
+  res.render('clientui/checkout', { user: req.session.user, num:req.session.num, cart: usercart, address: req.session.address })
 })
 
-app.post("/checkout", checkUser, async (req, res) => {
+app.post("/checkout", checkUser,checkDetails, async (req, res) => {
   const { address } = req.body
   var order = createOrder(usercart, address, 50, req)
   var apires = await axios.post(`${apihost}/api/orders/create`, order)
@@ -413,7 +468,7 @@ app.post("/checkout", checkUser, async (req, res) => {
 })
 
 app.get('/update-profile', checkUser, (req, res) => {
-  res.render('clientui/edit_profile', { user: req.session.user, address: req.session.address })
+  res.render('clientui/edit_profile', { user: req.session.user, num:req.session.num, address: req.session.address, message: false })
 })
 
 ////////////////////////
@@ -423,14 +478,6 @@ app.get('/update-profile', checkUser, (req, res) => {
 
 app.get("/", (req, res) => {
   res.redirect('/shop')
-})
-
-app.get("/protected", checkAdmin, (req, res) => {
-  res.status(200).json({ message: "Protected Resource!" })
-})
-
-app.get("/loggedin", checkLogin, (req, res) => {
-  res.status(200).json({ message: "Logged In" })
 })
 
 app.listen(3000, () => {

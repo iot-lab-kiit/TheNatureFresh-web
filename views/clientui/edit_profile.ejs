@@ -12,30 +12,56 @@
     <br />
     <br />
     <div class="container">
+        <a class="btn btn-outline-dark" href="/client-profile" >&#x2190;My Profile</a>
+        <br><hr>
+
     <!-- Edit User -->
     <h5><strong>Edit Profile:<strong></strong></h5>
-    <form action="/update-profile" method="POST"    >
+                      <div class="col-sm-12">
+    <form action="/updateDetails" method="POST" oninput='newpassword.setCustomValidity(newpassword.value != password.value ? "Passwords do not match." : "")' >
         <div class="form-group">
             <label for="name">Name:</label>
-            <input type="text" class="form-control" id="name" name="name" value="<%= user.displayName %>" oninput="document.getElementById('submit-btn').style.display = 'block'" />
+            <input type="text" class="form-control" id="name" name="name" value="<%= user.displayName %>" oninput="document.getElementById('fakeSubmit').style.display = 'block'" required/>
         </div>
         <div class="form-group">
-            <label for="password">Password:</label>
-            <input type="password" class="form-control" id="password" name="password" oninput="document.getElementById('submit-btn').style.display = 'block'" />
+            <label for="password1">New Password:</label>
+            <input type="password" class="form-control" id="password1" name="password" oninput="document.getElementById('fakeSubmit').style.display = 'block'" />
+            <label for="password2">Re-enter Password:</label>
+            <input type="password" class="form-control" id="password2" name="newpassword" oninput="document.getElementById('fakeSubmit').style.display = 'block'" />
         </div>
         <div>
             <label for="address">Address:</label>
-            <textarea class="form-control mb-3" id="address" name="address" oninput="document.getElementById('submit-btn').style.display = 'block'"><%= address %></textarea>
+            <textarea class="form-control mb-3" id="address" name="address" oninput="document.getElementById('fakeSubmit').style.display = 'block'" required><%= address %></textarea>
         </div>
-        <div class="form-group">
-            <label for="phnumber">Phone Number:</label>
-            <input type="number" class="form-control" id="phnumber" name="phnumber" value="<%= parseInt(user.phoneNumber.substr(3, 13)) %>" oninput="document.getElementById('submit-btn').style.display = 'block'" />
+        <label for="phoneNumber">Phone Number</label>
+        <div class="input-group mb-2" style="width: 100%;">
+            
+            <div class="input-group-prepend">
+              <span class="input-group-text text-dark">+91</span>
+            </div>
+            <% if(num){ var value = parseInt(num.substr(3, 13))} %>
+            <input type="text" class="form-control" id="phoneNumber" value="<%= value %>"  name="phoneNumber" placeholder="Phone No." required>
         </div>
-        <center><button id="submit-btn" style="display: none;" type="submit" class="btn btn-primary">Edit</button></center>
+        <center><button class="btn btn-outline-dark mt-4 px-3" id="fakeSubmit" onclick="handleSubmit(event)" style="display: none;">SUBMIT</button></center>
+        <center><button type="submit" class="btn btn-outline-light mt-4 px-3" id="realSubmit" style="display: none;">Hidden</button></center>
     </form>
     <!-- Edit User Ends -->
     
     </div>
+
+    <div aria-live="polite" aria-atomic="true" class="d-flex justify-content-center align-items-center text-light" style="min-height: 200px; position: absolute; top: 0; right: 50px;">
+        <div class="toast bg-dark" role="alert" aria-live="assertive" aria-atomic="true" data-autohide="false">
+          <div class="toast-header bg-light">
+            <strong class="mr-auto">Message</strong>
+            <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="toast-body">
+             <%= message %>
+          </div>
+        </div>
+      </div>
 
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
         integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
@@ -46,6 +72,20 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"
         integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI"
         crossorigin="anonymous"></script>
+        <script>  
+        
+        var mess = '<%- message %>'
+        if(mess!='false'){
+            $(document).ready(function(){
+                $('.toast').toast('show');
+            });
+        }
+            function handleSubmit(event) {
+                event.preventDefault()            
+                document.getElementById('phoneNumber').value = '+91' + document.getElementById('phoneNumber').value
+                document.getElementById('realSubmit').click()
+            }
+        </script>
 </body>
 
 </html>
