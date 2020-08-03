@@ -46,6 +46,14 @@
                             </tr>
                         </thead>
                         <tbody>
+                            
+                            <% if(orders.length == 0 ){%>
+                                <tr>
+                                    <td colspan="8" align="center "><br><h3>You haven't placed any orders yet. Go to <a href="/shop" >Shop</a></h3></td>
+                                </tr>
+                                <% }%>
+
+
                             <% orders.forEach(function(order,index){ %>
                                 <tr>
                                     <td><%= index+1 %></td>

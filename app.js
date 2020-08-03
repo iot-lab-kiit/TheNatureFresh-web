@@ -144,7 +144,6 @@ app.post("/signup", upload ,async (req, res) => {
         role: urole,
         address: uaddress,
       })
-      console.log('idhar aya')
       res.redirect('/signin')
     })
     .catch((err) => {

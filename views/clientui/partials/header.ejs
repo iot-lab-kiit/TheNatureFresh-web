@@ -17,7 +17,7 @@
             </li>
             <% if(user){%>
                 <li class="nav-item active">
-                    <a class="nav-link" href="/update-profile">Edit Profile</a>   
+                    <a class="nav-link" href="/client-profile">My Profile</a>   
                 </li>
             <% } %>
             
@@ -30,8 +30,8 @@
         <span class="btn"><a onclick="gotoCart()" href="/cart"><i class="fa fa-shopping-cart"  style="color: black;" aria-hidden="true"></i></a></span>       
         
         <% if(user){%>
-            <span class="btn"><a href="/client-profile"><i class="fa fa-user" style="color: black;" aria-hidden="true"></i></a>
-                <font style="color:black;">&nbsp; Welcome <%= user.displayName %></font>        
+            <span class="btn"><a href="/client-profile"><i class="fa fa-user" style="color: black;" aria-hidden="true"> </i>  <font style="color:black;">&nbsp; Welcome <%= user.displayName %></font>    </a>
+                   
             </span>
             <a href="/logout" class="btn-primary btn-dark btn-md btn" role="button">Logout</i></a>
         <% } else {%>
