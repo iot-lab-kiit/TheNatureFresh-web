@@ -32,15 +32,8 @@
                 </div>
             </li>
         </ul>
-        <form class="form-inline my-2 my-lg-0">
-            <input class="form-control mr-sm-2" type="search" placeholder="Search Fungus" aria-label="Search" />
-            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">
-                Search
-            </button>
-        </form>
-        
-        <span class="btn"><a href="/client-profile"><i class="fa fa-user" aria-hidden="true"></i></a><font style="color: white;">&nbsp; Welcome <%= user.displayName %></font></span>
-        <a href="/logout" class="btn-primary btn-dark btn-md btn" role="button">Logout</i></a>
+        <span class="btn"><a href="/client-profile" style="text-decoration: none;" ><i style="color: white;" class="fa fa-user" aria-hidden="true"></i><font style="color: white;">&nbsp; Welcome <%= user.displayName %></font></a></span>
+        <a href="/logout" class="btn-primary btn-md btn" role="button">Logout</i></a>
     </div>
 </nav>
 <!-- Navbar Ends -->

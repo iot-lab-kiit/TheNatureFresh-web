@@ -445,7 +445,10 @@ app.post('/cart', (req, res) => {
 })
 
 app.get("/cart", (req, res) => {
-  res.render('clientui/cart', { cart: usercart, user: req.session.user })
+  if(usercart.itemCount == 0)
+    res.redirect('/shop')
+  else
+    res.render('clientui/cart', { cart: usercart, user: req.session.user })
 })
 
 app.get('/order-details/:id', checkUser,checkDetails, async (req, res) => {
@@ -457,7 +460,10 @@ app.get('/order-details/:id', checkUser,checkDetails, async (req, res) => {
 })
 
 app.get("/checkout", checkUser,checkDetails, (req, res) => {
-  res.render('clientui/checkout', { user: req.session.user, num:req.session.num, cart: usercart, address: req.session.address })
+  if(usercart.itemCount == 0)
+    res.redirect('/shop')
+  else
+    res.render('clientui/checkout', { user: req.session.user, num:req.session.num, cart: usercart, address: req.session.address })
 })
 
 app.post("/checkout", checkUser,checkDetails, async (req, res) => {

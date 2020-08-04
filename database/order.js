@@ -4,7 +4,7 @@ var admin = require("firebase-admin")
 const getOrders = async () => {
     try {
         const orders = []
-        const snapshot = await db.collection('orders').get()
+        const snapshot = await db.collection('orders').orderBy('orderid', 'desc').get()
         snapshot.forEach(order => {
             orders.push(order.data())
         })
@@ -55,7 +55,7 @@ const getOrderByUserID = async (id) => {
         const orderList = []
         const snap = await db
             .collection("orders")
-            .where("user_id", "==", id)
+            .where("user_id", "==", id).orderBy('orderid', 'desc')
             .get();
         snap.forEach((doc) => {
             orderList.push(doc.data())
