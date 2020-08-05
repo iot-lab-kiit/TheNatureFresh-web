@@ -40,7 +40,7 @@
               <span class="input-group-text text-dark">+91</span>
             </div>
             <% if(num){ var value = parseInt(num.substr(3, 13))} %>
-            <input type="text" class="form-control" id="phoneNumber" value="<%= value %>"  name="phoneNumber" placeholder="Phone No." required>
+            <input type="text" class="form-control" id="phoneNumber" value="<%= value %>"  name="phoneNumber" placeholder="Phone No." oninput="document.getElementById('fakeSubmit').style.display = 'block'" required>
         </div>
         <center><button class="btn btn-outline-dark mt-4 px-3" id="fakeSubmit" onclick="handleSubmit(event)" style="display: none;">SUBMIT</button></center>
         <center><button type="submit" class="btn btn-outline-light mt-4 px-3" id="realSubmit" style="display: none;">Hidden</button></center>
