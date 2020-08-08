@@ -1,3 +1,4 @@
+require('dotenv').config()
 var admin = require("firebase-admin")
 var express = require("express")
 var bodyParser = require("body-parser")
@@ -486,6 +487,7 @@ app.get("/", (req, res) => {
   res.redirect('/shop')
 })
 
-app.listen(3000, () => {
-  console.log("App Listening at port 3000")
+var port = process.env.PORT || 3000
+app.listen(port, () => {
+    console.log(`Server live at port: ${port}`)
 })
