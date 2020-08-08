@@ -83,7 +83,8 @@ let upload = multer({
   limits: { fileSize: 10000000 }
 }).single('image')
 
-const apihost = 'http://localhost:3000'
+const apihost = `http://localhost:${process.env.PORT}`
+console.log(`API live at port: ${process.env.PORT}`)
 
 /////////////////
 //MIDDLEWARE END
