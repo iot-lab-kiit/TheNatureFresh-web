@@ -137,9 +137,13 @@
         <%- include ("partials/header.ejs") %>
     </header>
     <br />
-    <br />
+    <div style="width: 250px;" class="mx-auto p-3">
+    <center><img src="/images/logo.png" 
+                         alt="mushroom" class="thumbnail" 
+                         style="border-radius: 50px;"></center>
+                        </div>
     <div class="container-fluid">
-        <h3>Our Tasty & Healty Mushrooms</h3>
+        <h3 style="text-align: center;">Our Tasty & Healty Mushrooms</h3>
         <hr>
         <div class="row">
             <% products.forEach((product,index) => { %>
@@ -181,7 +185,7 @@
 
         <!-- <center><span class="btn"><a onclick="gotoCart()"><i class="fa fa-2x fa-shopping-cart " aria-hidden="true"></i><h3>&nbsp;Proceed To Cart</h3></a></span></center> -->
     </div>
-    <div aria-live="polite" aria-atomic="true" class="d-flex justify-content-center align-items-center text-light" style="min-height: 200px; position: absolute; top: 15px; right: 50px;">
+    <div aria-live="polite" aria-atomic="true" class="d-flex justify-content-center align-items-center text-light" style="min-height: 200px;position:fixed; top: 25px; right: 50px;">
         <div class="toast bg-dark" role="alert" aria-live="assertive" aria-atomic="true" data-autohide="true">
           <div class="toast-header bg-light">
             <strong class="mr-auto">Message</strong>
