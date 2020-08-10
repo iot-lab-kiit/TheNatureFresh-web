@@ -2,13 +2,18 @@
 <html lang="en">
 
 <head>
-    <%- include ("partials/head.ejs") %>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/all.min.css">
+    <link rel="stylesheet" type="text/css" href="css/main.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/js/all.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <link rel="icon" href="/images/logo.ico">
+    <title>The Nature Mushroom</title>
 </head>
 
 <body>
-    <header>
-        <%- include ("partials/header.ejs") %>
-    </header>
     <br />
     <br />
     <div class="container">
@@ -43,8 +48,8 @@
         <h4><u>Status:</u><h3><%= orders.orderStatus %></h3></h4>
         <br>
         <div class="row">
-            <div class="col-lg-12 sm-4 md-8">
-                <table class="table">
+            <div class="col-lg-12 sm-4 md-8" style="overflow-x:auto;">
+                <table class="table" >
                     <h3><u>Ordered Items</u></h3>
                     <hr>
                     <thead class="thead-dark">
@@ -80,7 +85,10 @@
     </div>
     
         <footer>
-            <%- include ("partials/footer.ejs") %>
+            <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
         </footer>
 </body>
 

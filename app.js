@@ -202,48 +202,7 @@ app.get('/logout', (req, res) => {
   }
 });
 
-app.post('/updateDetails', checkUser, async (req, res) => {
-  var id = req.session.user.uid;
-  const { name, password, phoneNumber, address } = req.body;
-  try {
-    if (password != '') {
-      var response = await admin.auth().updateUser(id, {
-        phoneNumber: phoneNumber,
-        password: password,
-        displayName: name,
-      })
-      req.session.user = response
-      req.session.num = phoneNumber
-    }
-    else {
-      var response = await admin.auth().updateUser(id, {
-        phoneNumber: phoneNumber,
-        displayName: name,
-      })
-      req.session.user = response
-      req.session.num = phoneNumber
-    }
-  } catch (error) {
-    console.log(error)
-    res.render('clientui/edit_profile', { user: req.session.user, num:req.session.num, address: req.session.address, message: error.message })
-  }
 
-  try {
-    const Ref = await db
-      .collection("users")
-      .where("uid", "==", id).get()
-    Ref.docs.forEach((doc) => {
-      const docRef = db.collection('users').doc(doc.id).update({ address: address })
-      const docRef2 = db.collection('users').doc(doc.id).update({ phone_number: phoneNumber })
-    })
-    req.session.address = address
-  } catch (error) {
-    console.log(error)
-    res.render('clientui/edit_profile', { user: req.session.user, num:req.session.num, address: req.session.address, message: error.message })
-
-  }
-  res.render('clientui/edit_profile', { user: req.session.user, num:req.session.num, address: req.session.address, message: 'Sucessfully Updated' })
-})
 
 ////////////////
 // LOGIN END
@@ -432,24 +391,64 @@ const createOrder = (cart, add, del_chrgs, req) => {
 app.get("/client-profile", checkUser,checkDetails, async (req, res) => {
   clearCart()
   var response = await axios.get(`${apihost}/api/orders/${req.session.user.uid}`)
-  res.render('clientui/profile', { user: req.session.user, num:req.session.num, address: req.session.address, orders: response.data })
+  res.render('client-profile', { user: req.session.user, num:req.session.num, address: req.session.address, orders: response.data })
 })
-
-// app.get("/shop", async (req, res) => {
-//   var response = await axios.get(`${apihost}/api/products`)
-//   res.render('clientui/shop', { products: response.data, usercart: usercart, user: req.session.user })
-// })
 
 app.get('/order-details/:id', checkUser,checkDetails, async (req, res) => {
   var response = await axios.get(`${apihost}/api/orders/ord/${req.params.id}`)
   if (response.data.user_id == req.session.user.uid)
-    res.render('clientui/order_detail', { user: req.session.user, num:req.session.num, orders: response.data })
+    res.render('order-details', { user: req.session.user, num:req.session.num, orders: response.data })
   else
-    res.send('Not authorised to view this order')
+    res.redirect('/client-profile')
 })
 
-app.get('/update-profile', checkUser, (req, res) => {
-  res.render('clientui/edit_profile', { user: req.session.user, num:req.session.num, address: req.session.address, message: false })
+
+
+app.get('/edit-profile', checkUser, (req, res) => {
+  res.render('edit-profile', { user: req.session.user, num:req.session.num, address: req.session.address, message: false })
+})
+
+app.post('/updateDetails', checkUser, async (req, res) => {
+  var id = req.session.user.uid;
+  const { name, password, phoneNumber, address } = req.body;
+  try {
+    if (password != '') {
+      var response = await admin.auth().updateUser(id, {
+        phoneNumber: phoneNumber,
+        password: password,
+        displayName: name,
+      })
+      req.session.user = response
+      req.session.num = phoneNumber
+    }
+    else {
+      var response = await admin.auth().updateUser(id, {
+        phoneNumber: phoneNumber,
+        displayName: name,
+      })
+      req.session.user = response
+      req.session.num = phoneNumber
+    }
+  } catch (error) {
+    console.log(error)
+    res.render('edit-profile', { user: req.session.user, num:req.session.num, address: req.session.address, message: error.message })
+  }
+
+  try {
+    const Ref = await db
+      .collection("users")
+      .where("uid", "==", id).get()
+    Ref.docs.forEach((doc) => {
+      const docRef = db.collection('users').doc(doc.id).update({ address: address })
+      const docRef2 = db.collection('users').doc(doc.id).update({ phone_number: phoneNumber })
+    })
+    req.session.address = address
+  } catch (error) {
+    console.log(error)
+    res.render('edit-profile', { user: req.session.user, num:req.session.num, address: req.session.address, message: error.message })
+
+  }
+  res.render('edit-profile', { user: req.session.user, num:req.session.num, address: req.session.address, message: 'Sucessfully Updated' })
 })
 
 app.get('/home', async (req, res) => {

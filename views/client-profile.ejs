@@ -26,21 +26,10 @@
         <link rel="stylesheet" href="assets/css/responsive.css" />
 
         <script src="assets/js/vendor/modernizr-2.8.3-respond-1.4.2.min.js"></script>
-        <style>
-        
-            #headerName {
-                font-size: 4.5rem;
-            }
-        
-            @media screen and (max-width: 600px) {
-        
-                #headerName {
-                    font-size: 3.5rem;
-                }
-            }
-        </style>
+        <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     </head>
     <body>
+
         <!--[if lt IE 8]>
             <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
         <![endif]-->
@@ -50,6 +39,7 @@
 
             <!-- End navbar-collapse-->
 
+            
             <div class="main_menu_bg">
                 <div class="container"> 
                     <div class="row">
@@ -70,10 +60,10 @@
                                 <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 
                                     <ul class="nav navbar-nav navbar-right">
-                                        <li><a href="#slider">Home</a></li>
+                                        <li><a href="/home">Home</a></li>
                                         <li><a href="/aboutus">About Us</a></li>
                                         <li><a href="/shop">Shop</a></li>
-                                        
+                                        <li><a href="/edit-profile">Edit Profile</a></li>
                                 <% if(user){%>
                                         <li >
                                         <% if(user.photoURL!=null){%>
@@ -101,144 +91,141 @@
                     </div>
                 </div>
             </div>	
-        </header> <!-- End Header Section -->
-
+        </header><!-- End Header Section -->
         <section id="slider" class="slider">
             <div class="slider_overlay">
-                <div class="container">
-                    <div class="row">
-                        <div class="main_slider text-center">
-                            <div class="col-md-12">
-                                <div class="main_slider_content wow zoomIn" data-wow-duration="1s">
-                                    <h1 id="headerName">The Nature<br> Mushroom</h1>
-                                    <p class="wow zoomIn"><h4>We grow mushrooms by hands so we can say 100% for quality.</h4></We></p>
-                                    <button href="" class="btn-lg">Shop Now</button>
-                                </div>
-                            </div>	
-                        </div>
+            <div class="container" >
 
-                    </div>
+                <div class="row-lg-12 text-center mx-auto" style="margin-top: 7rem;">
+                    <% if(user.photoURL!=null){%>
+                        <img src="<%= user.photoURL %>" style="width: 150px; height: 150px; object-fit: cover;  border: 2px solid white; border-radius: 3rem;" alt="John Doe" >
+                    <% } else {%>
+                        <img src="images/profile.webp" style="width: 150px; height: 150px; object-fit: cover;  border: 2px solid white; border-radius: 3rem;" alt="John Doe" >
+                        <% }%>
+                        <br>
+                        <br>
+                    <h4 style="font-size: 3rem; color:whitesmoke;"><%= user.displayName %></h4>
+                    <hr>
+                        <div style="color:whitesmoke; text-align:inherit;">
+                    <h4 style="font-size: 1.5rem;">Email : <%=user.email %></h4>
+                    <h4 style="font-size: 1.5rem;">Phone : <%= num %></h4>
+                    <h4 style="font-size: 1.5rem;"> Address : <%= address %></h4>
+                    <hr>
                 </div>
-            </div>
-        </section>
+                </div>
 
-        <section id="portfolio" class="portfolio">
-            <div class="container">
-                <div class="row">
-                    <div class="portfolio_content text-center  wow fadeIn" data-wow-duration="5s">
-                        <div class="col-md-12">
-                            <div class="head_title text-center">
-                                <h4>Our Range</h4>
-                                <h4>Of Mushrooms</h4>
+            
+                <div  style="overflow-x:auto;">
+                    <table class="table" style="background-color:whitesmoke; border-radius: 2rem; padding: 3rem;">
+                        <h6><h4 style="color: aliceblue;"> Your Orders</h4> </h6><br>
+                        <thead>
+                            <tr>
+                                <th scope="col"><h5>S.No</h5></th>
+                                <th scope="col"><h5>OrderID</h5></th>
+                                <th scope="col"><h5>Date</h5></th>
+                                <th scope="col"><h5>Items</h5></th>
+                                <th scope="col"><h5>Address</h5></th>
+                                <th scope="col"><h5>Total</h5></th>
+                                <th scope="col"><h5>Status</h5></th>
+                                <th scope="col"><h5>Operations</h5></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            
+                            <% if(orders.length == 0 ){%>
+                                <tr>
+                                    <td colspan="8" align="center "><br><h3>You haven't placed any orders yet. Go to <a href="/shop" >Shop</a></h3></td>
+                                </tr>
+                                <% }%>
+    
+    
+                            <% orders.forEach((order,index) => { %>
+                                <tr>
+                                    <td><%= index+1 %></td>
+                                    <td><%= order.orderid %></td>
+                                    <td><%= order.order_day %></td>
+                                    <td>
+                                        <% order.cart.products.forEach(function(product){%>
+                                        <%= product.qty_purchased %> X <%= product.item_name %> <br>
+                                        <% })%>
+                                    </td>
+                                    <td><%= order.address %></td>
+                                    <td><%= order.total %></td>
+                                    <td><%= order.orderStatus %></td>
+                                    <td>
+                                        <a href="/order-details/<%= order.orderid %>"><button type="button" class="btn btn-sm btn-warning">Details</button></a>
+                                    </td>
+                                </tr>
+                            <% })%>
+                            </tbody>
+                    </table>
+                </div>
+                
+
+                <!-- <div style="margin: 7rem;">
+                        <div class="row text-center" style="position: absolute; left: 0; right: 0;">
+                            <% if(user.photoURL!=null){%>
+                                <img src="<%= user.photoURL %>" style="width: 130px; height: 130px; object-fit: cover; object-position: top; border: 4px solid white;" alt="John Doe" class="card-img-top rounded-circle">
+                            <% } else {%>
+                                <img src="images/profile.webp" style="width: 130px; height: 130px; object-fit: cover; object-position: top; border: 4px solid white;" alt="John Doe" class="card-img-top rounded-circle">
+                                <% }%>
+                            <h3 class="display-4 p-3"><%= user.displayName %></h3>
+                    </div>
+                        <div >
+                            <div>
+                                <h6><strong>EMAIL</strong><span style="float: right;">&nbsp;<%=user.email %></span></h6><br>
+                                <h6><strong>PHONE NUMBER</strong><span style="float: right;">&nbsp;<%= num %></span></h6><br>
+                                <h6><strong>ADDRESS</strong><span style="float: right;">&nbsp;<%= address %></span></h6>
                             </div>
-                            <div class="main_portfolio_content">
-
-                                <% products.forEach((product,index) => { %>
-                                <div class="col-md-3 col-sm-4 col-xs-10 single_portfolio_text">
-                                    <img src="<%= product.image_url %>" alt="" class="thumbnail" style="margin: 2rem; width: 300px;
-                                    height: 260px;
-                                    object-fit: cover;" />
-                                    <div class="portfolio_images_overlay text-center" style="margin-left: 1rem; margin-top:0.3rem; " >
-                                        <h6><%= product.item_name %></h6>
-                                        <p class="product_price">&#8377;<%= product.price%></p>
-                                        <a href="" class="btn btn-primary">Buy Now</a>
-                                    </div>
-                                </div>
+                        </div>
+                        <table class="table">
+                            <h6><strong></strong><h2>Orders</h2> </h6><br>
+                            <thead>
+                                <tr style="text-align: center;">
+                                    <th scope="col">S.No</th>
+                                    <th scope="col">OrderID</th>
+                                    <th scope="col">Date</th>
+                                    <th scope="col">Items</th>
+                                    <th scope="col">Address</th>
+                                    <th scope="col">Total</th>
+                                    <th scope="col">Status</th>
+                                    <th scope="col">Operations</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                
+                                <% if(orders.length == 0 ){%>
+                                    <tr>
+                                        <td colspan="8" align="center "><br><h3>You haven't placed any orders yet. Go to <a href="/shop" >Shop</a></h3></td>
+                                    </tr>
+                                    <% }%>
+    
+    
+                                <% orders.forEach((order,index) => { %>
+                                    <tr style="background-color: rgb(219, 219, 219); text-align: center;">
+                                        <td><%= index+1 %></td>
+                                        <td><%= order.orderid %></td>
+                                        <td><%= order.order_day %></td>
+                                        <td>
+                                            <% order.cart.products.forEach(function(product){%>
+                                            <%= product.qty_purchased %> X <%= product.item_name %> <br>
+                                            <% })%>
+                                        </td>
+                                        <td><%= order.address %></td>
+                                        <td><%= order.total %></td>
+                                        <td><%= order.orderStatus %></td>
+                                        <td>
+                                            <a href="/order-details/<%= order.orderid %>"><button type="button" class="btn btn-sm btn-warning">Details</button></a>
+                                        </td>
+                                    </tr>
                                 <% })%>
-                                
-                                
-                                
-                            </div>
-                        </div>
-                    </div>
+                                </tbody>
+                        </table>
                 </div>
+                 -->
+            </div>
             </div>
         </section>
-
-        <section id="ourPakeg" class="ourPakeg">
-            <div class="container">
-                <div class="main_pakeg_content">
-                    <div class="row">
-                        <div class="head_title text-center">
-                            <h4 >Growth</h4>
-                            <h4>Procedure</h4>
-                        </div>
-
-                        <div class="single_pakeg_one text-right wow rotateInDownRight">
-                            <div class="col-md-6 col-md-offset-6 col-sm-8 col-sm-offset-4">
-                                <div class="single_pakeg_text">
-                                    <div class="pakeg_title">
-                                        <h4>Initial</h4>
-                                    </div>
-                                    <br>
-                                    <ul>
-                                        <li><h4>Step 1 - Composting</h4></li>
-                                        <li> <h4>Step 2 - Pasturization</h4></li>
-                                        
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="single_pakeg_two text-left wow rotateInDownLeft">
-                            <div class="col-md-6 col-sm-8">
-                                <div class="single_pakeg_text">
-                                    <div class="pakeg_title">
-                                        <h4>Spwan and Growth</h4>
-                                    </div>
-                                    <br>
-
-                                    <ul>
-                                        <li><h4>Step 3 - Spawning</h4></li>
-                                        <li><h4>Step 4 - Casing</h4></li>
-                                        
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="single_pakeg_three text-left wow rotateInDownRight">
-                            <div class="col-md-6 col-md-offset-6 col-sm-8 col-sm-offset-4">
-                                <div class="single_pakeg_text">
-                                    <div class="pakeg_title">
-                                        <h4>Snipping and Packing</h4>
-                                    </div>
-                                    <br>
-
-                                    <ul>
-                                        <li><h4>Step 5 - Pinning</h4></li>
-                                        <li><h4>Step 6 - Cropping</h4></li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section id="mobaileapps" class="mobailapps">
-            <div class="slider_overlay">
-                <div class="container">
-                    <div class="row">
-                        <div class="main_mobail_apps_content wow zoomIn">
-                            <div class="col-md-5 col-sm-12 text-center">
-                                <img src="assets/images/iphone.png" alt="" />
-                            </div>
-                            <div class="col-md-7 col-sm-12">
-                                <div class="single_monail_apps_text">
-                                    <h4>Happy to Announce </h4>
-                                    <h1>Mobile App <span>is Available on Google Play Store.</span></h1>
-
-                                    <a href=""><img src="assets/images/google.png" alt="" /></a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
         <section id="footer_widget" class="footer_widget">
             <div class="container">
                 <div class="row">
@@ -343,5 +330,6 @@
         <script src="assets/js/wow/wow.min.js"></script>
         <script src="assets/js/plugins.js"></script>
         <script src="assets/js/main.js"></script>
+        
     </body>
 </html>

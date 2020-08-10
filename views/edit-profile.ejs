@@ -26,21 +26,10 @@
         <link rel="stylesheet" href="assets/css/responsive.css" />
 
         <script src="assets/js/vendor/modernizr-2.8.3-respond-1.4.2.min.js"></script>
-        <style>
-        
-            #headerName {
-                font-size: 4.5rem;
-            }
-        
-            @media screen and (max-width: 600px) {
-        
-                #headerName {
-                    font-size: 3.5rem;
-                }
-            }
-        </style>
+        <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     </head>
     <body>
+
         <!--[if lt IE 8]>
             <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
         <![endif]-->
@@ -50,6 +39,7 @@
 
             <!-- End navbar-collapse-->
 
+            
             <div class="main_menu_bg">
                 <div class="container"> 
                     <div class="row">
@@ -70,7 +60,7 @@
                                 <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 
                                     <ul class="nav navbar-nav navbar-right">
-                                        <li><a href="#slider">Home</a></li>
+                                        <li><a href="/home">Home</a></li>
                                         <li><a href="/aboutus">About Us</a></li>
                                         <li><a href="/shop">Shop</a></li>
                                         
@@ -101,144 +91,45 @@
                     </div>
                 </div>
             </div>	
-        </header> <!-- End Header Section -->
-
+        </header><!-- End Header Section -->
         <section id="slider" class="slider">
             <div class="slider_overlay">
-                <div class="container">
-                    <div class="row">
-                        <div class="main_slider text-center">
-                            <div class="col-md-12">
-                                <div class="main_slider_content wow zoomIn" data-wow-duration="1s">
-                                    <h1 id="headerName">The Nature<br> Mushroom</h1>
-                                    <p class="wow zoomIn"><h4>We grow mushrooms by hands so we can say 100% for quality.</h4></We></p>
-                                    <button href="" class="btn-lg">Shop Now</button>
-                                </div>
-                            </div>	
-                        </div>
-
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section id="portfolio" class="portfolio">
             <div class="container">
-                <div class="row">
-                    <div class="portfolio_content text-center  wow fadeIn" data-wow-duration="5s">
-                        <div class="col-md-12">
-                            <div class="head_title text-center">
-                                <h4>Our Range</h4>
-                                <h4>Of Mushrooms</h4>
-                            </div>
-                            <div class="main_portfolio_content">
-
-                                <% products.forEach((product,index) => { %>
-                                <div class="col-md-3 col-sm-4 col-xs-10 single_portfolio_text">
-                                    <img src="<%= product.image_url %>" alt="" class="thumbnail" style="margin: 2rem; width: 300px;
-                                    height: 260px;
-                                    object-fit: cover;" />
-                                    <div class="portfolio_images_overlay text-center" style="margin-left: 1rem; margin-top:0.3rem; " >
-                                        <h6><%= product.item_name %></h6>
-                                        <p class="product_price">&#8377;<%= product.price%></p>
-                                        <a href="" class="btn btn-primary">Buy Now</a>
-                                    </div>
-                                </div>
-                                <% })%>
-                                
-                                
-                                
-                            </div>
-                        </div>
+                <div class="container" style="background-color:whitesmoke; padding: 2rem; margin: 3rem;  border-radius: 10px; margin-top: 10rem;">
+                    <a class="btn btn-primary" href="/client-profile" >&#x2190; My Profile</a>
+                    <br><hr>
+            
+                <!-- Edit User -->
+                <h5><strong>Edit Profile:<strong></strong></h5>
+                                  <div class="col-sm-12">
+                <form action="/updateDetails" method="POST" oninput='newpassword.setCustomValidity(newpassword.value != password.value ? "Passwords do not match." : "")' >
+                    <div class="form-group">
+                        <label for="name">Name:</label>
+                        <input type="text" style="background-color:beige;" class="form-control" id="name" name="name" value="<%= user.displayName %>" oninput="document.getElementById('fakeSubmit').style.display = 'block'" required/>
                     </div>
-                </div>
+                    <div class="form-group">
+                        <label for="password1">New Password:</label>
+                        <input type="password" style="background-color:beige;"class="form-control" id="password1" name="password" oninput="document.getElementById('fakeSubmit').style.display = 'block'" />
+                        <label for="password2">Re-enter Password:</label>
+                        <input type="password" style="background-color:beige;"class="form-control" id="password2" name="newpassword" oninput="document.getElementById('fakeSubmit').style.display = 'block'" />
+                    </div>
+                    <div>
+                        <label for="address">Address:</label>
+                        <textarea class="form-control mb-3" style="background-color:beige;"id="address" name="address" oninput="document.getElementById('fakeSubmit').style.display = 'block'" required><%= address %></textarea>
+                    </div>
+                    <label for="phoneNumber">Phone Number</label>
+                    <div class="input-group mb-2" style="width: 100%;">
+                        <% if(num){ var value = parseInt(num.substr(3, 13))} %>
+                        <input type="text" style="background-color:beige;" class="form-control" id="phoneNumber" value="<%= value %>"  name="phoneNumber" placeholder="Phone No." oninput="document.getElementById('fakeSubmit').style.display = 'block'" required>
+                    </div>
+                    <br>
+                    <center><button class="btn btn-primary" id="fakeSubmit" onclick="handleSubmit(event)" >SUBMIT</button></center>
+                    <center><button type="submit" class="btn btn-outline-light mt-4 px-3" id="realSubmit" style="display: none;">Hidden</button></center>
+                </form>
+                
+            </div>
             </div>
         </section>
-
-        <section id="ourPakeg" class="ourPakeg">
-            <div class="container">
-                <div class="main_pakeg_content">
-                    <div class="row">
-                        <div class="head_title text-center">
-                            <h4 >Growth</h4>
-                            <h4>Procedure</h4>
-                        </div>
-
-                        <div class="single_pakeg_one text-right wow rotateInDownRight">
-                            <div class="col-md-6 col-md-offset-6 col-sm-8 col-sm-offset-4">
-                                <div class="single_pakeg_text">
-                                    <div class="pakeg_title">
-                                        <h4>Initial</h4>
-                                    </div>
-                                    <br>
-                                    <ul>
-                                        <li><h4>Step 1 - Composting</h4></li>
-                                        <li> <h4>Step 2 - Pasturization</h4></li>
-                                        
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="single_pakeg_two text-left wow rotateInDownLeft">
-                            <div class="col-md-6 col-sm-8">
-                                <div class="single_pakeg_text">
-                                    <div class="pakeg_title">
-                                        <h4>Spwan and Growth</h4>
-                                    </div>
-                                    <br>
-
-                                    <ul>
-                                        <li><h4>Step 3 - Spawning</h4></li>
-                                        <li><h4>Step 4 - Casing</h4></li>
-                                        
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="single_pakeg_three text-left wow rotateInDownRight">
-                            <div class="col-md-6 col-md-offset-6 col-sm-8 col-sm-offset-4">
-                                <div class="single_pakeg_text">
-                                    <div class="pakeg_title">
-                                        <h4>Snipping and Packing</h4>
-                                    </div>
-                                    <br>
-
-                                    <ul>
-                                        <li><h4>Step 5 - Pinning</h4></li>
-                                        <li><h4>Step 6 - Cropping</h4></li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section id="mobaileapps" class="mobailapps">
-            <div class="slider_overlay">
-                <div class="container">
-                    <div class="row">
-                        <div class="main_mobail_apps_content wow zoomIn">
-                            <div class="col-md-5 col-sm-12 text-center">
-                                <img src="assets/images/iphone.png" alt="" />
-                            </div>
-                            <div class="col-md-7 col-sm-12">
-                                <div class="single_monail_apps_text">
-                                    <h4>Happy to Announce </h4>
-                                    <h1>Mobile App <span>is Available on Google Play Store.</span></h1>
-
-                                    <a href=""><img src="assets/images/google.png" alt="" /></a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
         <section id="footer_widget" class="footer_widget">
             <div class="container">
                 <div class="row">
@@ -343,5 +234,17 @@
         <script src="assets/js/wow/wow.min.js"></script>
         <script src="assets/js/plugins.js"></script>
         <script src="assets/js/main.js"></script>
+        <script>
+            var mess = '<%- message %>'
+        if(mess!='false'){
+            alert(mess)
+        }
+            function handleSubmit(event) {
+                event.preventDefault()            
+                document.getElementById('phoneNumber').value = '+91' + document.getElementById('phoneNumber').value
+                document.getElementById('realSubmit').click()
+            }
+        </script>
+        </script>
     </body>
 </html>
