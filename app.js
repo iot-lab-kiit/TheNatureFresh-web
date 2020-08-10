@@ -95,6 +95,17 @@ console.log(`API live at port: ${process.env.PORT}`)
 // LOGIN START
 ////////////////
 
+app.get('/home', async (req, res) => {
+  var response = await axios.get(`${apihost}/api/products`)
+  res.render('home.ejs', { products: response.data, usercart: usercart, user: req.session.user })
+})
+
+app.get('/aboutus', (req, res) => {
+  res.render('aboutus.ejs', { message: false })
+})
+
+
+
 app.get('/signup', (req, res) => {
   if (req.session.user && req.cookies.creds)
     res.redirect('/reroute')
