@@ -26,8 +26,129 @@
         <link rel="stylesheet" href="assets/css/responsive.css" />
 
         <script src="assets/js/vendor/modernizr-2.8.3-respond-1.4.2.min.js"></script>
+        <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+
+    <script>
+        var prods = '<%- JSON.stringify(products) %>';
+        var test = JSON.parse(prods)
+        var cart = {
+            products:[],
+            itemCount:0
+        }
+        var ucart = JSON.parse('<%- JSON.stringify(usercart) %>')
+        var cart = ucart;
+        
+        const setPage = () =>{
+            if(cart.itemCount != '0'){
+
+                document.getElementById('checkoutBtnFab').style.display = 'block';
+            } else {
+                document.getElementById('checkoutBtnFab').style.display = 'none';
+            }
+
+            cart.products.forEach(item=>{
+            var index = 0
+            test.forEach(prod=>{
+                if(item.id === prod.id)
+                document.getElementById(index).innerHTML=item.qty_purchased
+                else
+                    index++;
+            })
+        })
+        }
+        const gotoCart = () =>{
+            if(cart.itemCount!=0){
+                $.post('/cart', {cart:cart}, function(response){ 
+                    window.location.replace("/cart") 
+                });
+            }
+            else{
+                alert("Select some items before proceeding");
+            }
+            
+        }
+        const addProduct = index => {
+            // console.log(test[index])
+            const i = cart.products.findIndex( item => item.id === test[index].id)
+            if(i !== -1){ //if item exists
+                if(cart.products[i].qty_purchased<cart.products[i].qty_available){
+                    cart.products[i].qty_purchased++
+                    document.getElementById(index).innerHTML=cart.products[i].qty_purchased;
+                    cart.itemCount++
+                }
+                else{
+                    alert('Item not in Stock')
+                }
+                
+            }
+            else{ 
+                //if item not exist
+                if(test[index].qty_available==0){
+                    alert('Item not in Stock')
+                }
+                else{
+                    cart.products.push({
+                    ...test[index],
+                    qty_purchased:1
+                })
+                document.getElementById(index).innerHTML=1;
+                cart.itemCount++
+                }
+                
+            }
+            if(cart.itemCount != '0'){
+                document.getElementById('checkoutBtnFab').style.display = 'block';
+            } else {
+                document.getElementById('checkoutBtnFab').style.display = 'none';
+            }
+            // console.log(cart)
+        }
+        const removeProduct = index => {
+            const i = cart.products.findIndex( item => item.id === test[index].id)
+            if( i === -1 ){
+                // console.log('Item not in cart')
+                return
+            }
+            else if (cart.products[i].qty_purchased <= 1){
+                cart.products = cart.products.filter( item => item.id != test[index].id)
+                document.getElementById(index).innerHTML=0;
+            }
+            else {
+                cart.products[i].qty_purchased--
+                document.getElementById(index).innerHTML=cart.products[i].qty_purchased;
+            }
+            cart.itemCount--
+            // console.log(cart)
+            if(cart.itemCount != '0'){
+                document.getElementById('checkoutBtnFab').style.display = 'block';
+            } else {
+                document.getElementById('checkoutBtnFab').style.display = 'none';
+            }
+        }
+    </script>
+    <style>
+        ::-webkit-scrollbar {
+            display: none;
+        }
+
+        .fab-button {
+            z-index: 2;
+            margin-top: 40px;
+            position: fixed;
+            right: 50px;
+            bottom: 50px;
+            border-radius: 100px;
+            box-shadow: 2px 2px 10px -2px rgba(0,0,0,0.75);
+        }
+    </style>
     </head>
-    <body>
+    <body  onload="setPage()">
+        <div class="btn btn-success fab-button px-3 py-2" style="display: none;" id="checkoutBtnFab" onclick="gotoCart()">  
+            <p class="pr-1" style="display:inline; vertical-align: top;"><span>CHECKOUT</span></p>
+            <svg width="1.5em" height="1.5em" viewBox="0 0 16 16" class="bi bi-cart3" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd" d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .49.598l-1 5a.5.5 0 0 1-.465.401l-9.397.472L4.415 11H13a.5.5 0 0 1 0 1H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5zM3.102 4l.84 4.479 9.144-.459L13.89 4H3.102zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm-7 1a1 1 0 1 0 0 2 1 1 0 0 0 0-2zm7 0a1 1 0 1 0 0 2 1 1 0 0 0 0-2z"/>
+            </svg>
+        </div>
         <!--[if lt IE 8]>
             <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
         <![endif]-->
@@ -37,6 +158,7 @@
 
             <!-- End navbar-collapse-->
 
+            
             <div class="main_menu_bg">
                 <div class="container"> 
                     <div class="row">
@@ -57,7 +179,7 @@
                                 <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 
                                     <ul class="nav navbar-nav navbar-right">
-                                        <li><a href="#slider">Home</a></li>
+                                        <li><a href="/home">Home</a></li>
                                         <li><a href="/aboutus">About Us</a></li>
                                         <li><a href="/shop">Shop</a></li>
                                         
@@ -89,143 +211,50 @@
                 </div>
             </div>	
         </header> <!-- End Header Section -->
-
         <section id="slider" class="slider">
             <div class="slider_overlay">
-                <div class="container">
-                    <div class="row">
-                        <div class="main_slider text-center">
-                            <div class="col-md-12">
-                                <div class="main_slider_content wow zoomIn" data-wow-duration="1s">
-                                    <h1 style="font-size:4.5rem">The Nature<br> Mushroom</h1>
-                                    <p class="wow zoomIn"><h4>We grow mushrooms by hands so we can say 100% for quality.</h4></We></p>
-                                    <button href="" class="btn-lg">Shop Now</button>
-                                </div>
-                            </div>	
-                        </div>
-
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section id="portfolio" class="portfolio">
             <div class="container">
+                <h4 style="color: white; margin-top: 10rem;">Our Tasty & Healty Mushrooms</h4>
                 <div class="row">
-                    <div class="portfolio_content text-center  wow fadeIn" data-wow-duration="5s">
-                        <div class="col-md-12">
-                            <div class="head_title text-center">
-                                <h4>Our Range</h4>
-                                <h4>Of Mushrooms</h4>
-                            </div>
-                            <div class="main_portfolio_content">
-
-                                <% products.forEach((product,index) => { %>
-                                <div class="col-md-3 col-sm-4 col-xs-10 single_portfolio_text">
-                                    <img src="<%= product.image_url %>" alt="" class="thumbnail" style="margin: 2rem; width: 310px;
-                                    height: 260px;
-                                    object-fit: cover;" />
-                                    <div class="portfolio_images_overlay text-center" style="margin-left: 2rem;" >
-                                        <h6><%= product.item_name %></h6>
-                                        <p class="product_price">&#8377;<%= product.price%></p>
-                                        <a href="" class="btn btn-primary">Buy Now</a>
+                    <br><br>
+                    <% products.forEach((product,index) => { %>
+                        <div class="col-md-4 rounded" style="padding: 2rem;">
+                            <div style="width: 350px; background-color:whitesmoke; padding: 1rem;  border-radius: 10px;" class="mx-auto p-3">
+                                <img src="<%= product.image_url %>" 
+                                     alt="mushroom" class="thumbnail" 
+                                     style="border-top-left-radius: 10px; border-top-right-radius: 10px; width: 310px;
+                                     height: 260px;
+                                     object-fit: cover;">
+                                <div class="box-element product card-img-top mb-4" style="border-bottom-left-radius: 10px; border-bottom-right-radius: 10px;">
+                                    <div>
+                                        <h5 style="display: inline; vertical-align: middle;">
+                                            <b><%= product.item_name %></b><hr>
+                                            <h6 ><strong>&#8377;<%= product.price%>/packet(250g)</strong></h6>
+                                        </h5>
                                     </div>
+                                    <p style="text-align: justify; min-height: 70px; max-height: 100px;"><%= product.item_description %></p>
+                                    <h5 class="mb-3"><b>Available: <%= product.qty_available %></b></h5>
+                                    <center>
+                                        <div class="btn-group " role="group"  aria-label="Basic example">
+                                            <button data-product=1 data-action="add" type="button" 
+                                                    class="btn btn-secondary add-btn update-cart"
+                                                    onclick="addProduct('<%- index %>')"
+                                                    style="border-top-left-radius: 7px; border-bottom-left-radius: 7px; background-color: bisque;">+</button>
+                                            <span id = '<%- index %>' style="background-color: bisque;" class="btn btn-secondary">0</span>
+                                            <button data-product=1 data-action="remove" type="button" 
+                                                    class="btn btn-secondary add-btn update-cart"
+                                                    onclick="removeProduct('<%- index %>')"
+                                                    style="border-top-right-radius: 7px; border-bottom-right-radius: 7px; background-color: bisque;">-</button>
+                                        </div>
+                                    </center>
                                 </div>
-                                <% })%>
-                                
-                                
-                                
                             </div>
                         </div>
-                    </div>
+                    <% })%>
                 </div>
             </div>
-        </section>
-
-        <section id="ourPakeg" class="ourPakeg">
-            <div class="container">
-                <div class="main_pakeg_content">
-                    <div class="row">
-                        <div class="head_title text-center">
-                            <h4 >Growth</h4>
-                            <h4>Procedure</h4>
-                        </div>
-
-                        <div class="single_pakeg_one text-right wow rotateInDownRight">
-                            <div class="col-md-6 col-md-offset-6 col-sm-8 col-sm-offset-4">
-                                <div class="single_pakeg_text">
-                                    <div class="pakeg_title">
-                                        <h4>Initial</h4>
-                                    </div>
-                                    <br>
-                                    <ul>
-                                        <li><h4>Step 1 - Composting</h4></li>
-                                        <li> <h4>Step 2 - Pasturization</h4></li>
-                                        
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="single_pakeg_two text-left wow rotateInDownLeft">
-                            <div class="col-md-6 col-sm-8">
-                                <div class="single_pakeg_text">
-                                    <div class="pakeg_title">
-                                        <h4>Spwan and Growth</h4>
-                                    </div>
-                                    <br>
-
-                                    <ul>
-                                        <li><h4>Step 3 - Spawning</h4></li>
-                                        <li><h4>Step 4 - Casing</h4></li>
-                                        
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="single_pakeg_three text-left wow rotateInDownRight">
-                            <div class="col-md-6 col-md-offset-6 col-sm-8 col-sm-offset-4">
-                                <div class="single_pakeg_text">
-                                    <div class="pakeg_title">
-                                        <h4>Snipping and Packing</h4>
-                                    </div>
-                                    <br>
-
-                                    <ul>
-                                        <li><h4>Step 5 - Pinning</h4></li>
-                                        <li><h4>Step 6 - Cropping</h4></li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
             </div>
         </section>
-
-        <section id="mobaileapps" class="mobailapps">
-            <div class="slider_overlay">
-                <div class="container">
-                    <div class="row">
-                        <div class="main_mobail_apps_content wow zoomIn">
-                            <div class="col-md-5 col-sm-12 text-center">
-                                <img src="assets/images/iphone.png" alt="" />
-                            </div>
-                            <div class="col-md-7 col-sm-12">
-                                <div class="single_monail_apps_text">
-                                    <h4>Happy to Announce </h4>
-                                    <h1>Mobile App <span>is Available on Google Play Store.</span></h1>
-
-                                    <a href=""><img src="assets/images/google.png" alt="" /></a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
         <section id="footer_widget" class="footer_widget">
             <div class="container">
                 <div class="row">
@@ -330,5 +359,6 @@
         <script src="assets/js/wow/wow.min.js"></script>
         <script src="assets/js/plugins.js"></script>
         <script src="assets/js/main.js"></script>
+        
     </body>
 </html>

@@ -26,8 +26,10 @@
         <link rel="stylesheet" href="assets/css/responsive.css" />
 
         <script src="assets/js/vendor/modernizr-2.8.3-respond-1.4.2.min.js"></script>
+        <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     </head>
     <body>
+
         <!--[if lt IE 8]>
             <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
         <![endif]-->
@@ -37,6 +39,7 @@
 
             <!-- End navbar-collapse-->
 
+           
             <div class="main_menu_bg">
                 <div class="container"> 
                     <div class="row">
@@ -57,7 +60,7 @@
                                 <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 
                                     <ul class="nav navbar-nav navbar-right">
-                                        <li><a href="#slider">Home</a></li>
+                                        <li><a href="/home">Home</a></li>
                                         <li><a href="/aboutus">About Us</a></li>
                                         <li><a href="/shop">Shop</a></li>
                                         
@@ -89,143 +92,102 @@
                 </div>
             </div>	
         </header> <!-- End Header Section -->
-
         <section id="slider" class="slider">
             <div class="slider_overlay">
-                <div class="container">
-                    <div class="row">
-                        <div class="main_slider text-center">
-                            <div class="col-md-12">
-                                <div class="main_slider_content wow zoomIn" data-wow-duration="1s">
-                                    <h1 style="font-size:4.5rem">The Nature<br> Mushroom</h1>
-                                    <p class="wow zoomIn"><h4>We grow mushrooms by hands so we can say 100% for quality.</h4></We></p>
-                                    <button href="" class="btn-lg">Shop Now</button>
-                                </div>
-                            </div>	
-                        </div>
-
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section id="portfolio" class="portfolio">
             <div class="container">
+                <h4 style="color: white; margin-top: 10rem;">Your Shipping Details</h4>
                 <div class="row">
-                    <div class="portfolio_content text-center  wow fadeIn" data-wow-duration="5s">
-                        <div class="col-md-12">
-                            <div class="head_title text-center">
-                                <h4>Our Range</h4>
-                                <h4>Of Mushrooms</h4>
-                            </div>
-                            <div class="main_portfolio_content">
+                    <br><br>
+                    <div class="col-lg-12" style="background-color:whitesmoke; padding: 1rem; margin: 2rem;  border-radius: 10px;">
 
-                                <% products.forEach((product,index) => { %>
-                                <div class="col-md-3 col-sm-4 col-xs-10 single_portfolio_text">
-                                    <img src="<%= product.image_url %>" alt="" class="thumbnail" style="margin: 2rem; width: 310px;
-                                    height: 260px;
-                                    object-fit: cover;" />
-                                    <div class="portfolio_images_overlay text-center" style="margin-left: 2rem;" >
-                                        <h6><%= product.item_name %></h6>
-                                        <p class="product_price">&#8377;<%= product.price%></p>
-                                        <a href="" class="btn btn-primary">Buy Now</a>
+                        <a class="btn btn-primary" href="/cart">&#x2190; Back to Cart</a>
+                        <hr>
+                        <div class="container">
+                            <h4>Fill the form and proceed to checkout.</h4>
+                            <hr />
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <div class="box-element" id="form-wrapper">
+                                        <form id="form" method="POST" action='/checkout'>
+                                            <div id="user-info">
+                                                <div class="form-field">
+                                                    <label for="name">Name</label>
+                                                    <input required class="form-control" type="text" name="name" placeholder="Name" value="<%= user.displayName %>" disabled >
+                                                </div>
+                                                <div class="form-field">
+                                                    <label for="email">Email</label>
+                                                    <input required class="form-control" type="email" name="email" placeholder="Email" value="<%= user.email %>" disabled>
+                                                </div>
+                                            </div>
+                    
+                                            <div id="shipping-info">
+                                                <hr>
+                                                <p><b>Shipping Information:</b></p>
+                                                <hr>
+                                                <div class="form-field">
+                                                    <label for="Number">Number</label>
+                                                    <input class="form-control" type="text" name="Number" placeholder="Number" value="<%= num %>" disabled>
+                                                </div>
+                                                <div class="form-field">
+                                                    <label for="address">Address</label>
+                                                    <input class="form-control" style="background-color: wheat;" type="text" name="address" placeholder="Address" value="<%= address %>">
+                                                </div>
+                                            </div>
+                                            <br><br>
+                                            <input class="btn btn-primary" type="submit" value="Make Payment">
+                                        </form>
                                     </div>
                                 </div>
-                                <% })%>
-                                
-                                
-                                
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section id="ourPakeg" class="ourPakeg">
-            <div class="container">
-                <div class="main_pakeg_content">
-                    <div class="row">
-                        <div class="head_title text-center">
-                            <h4 >Growth</h4>
-                            <h4>Procedure</h4>
-                        </div>
-
-                        <div class="single_pakeg_one text-right wow rotateInDownRight">
-                            <div class="col-md-6 col-md-offset-6 col-sm-8 col-sm-offset-4">
-                                <div class="single_pakeg_text">
-                                    <div class="pakeg_title">
-                                        <h4>Initial</h4>
-                                    </div>
-                                    <br>
-                                    <ul>
-                                        <li><h4>Step 1 - Composting</h4></li>
-                                        <li> <h4>Step 2 - Pasturization</h4></li>
-                                        
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="single_pakeg_two text-left wow rotateInDownLeft">
-                            <div class="col-md-6 col-sm-8">
-                                <div class="single_pakeg_text">
-                                    <div class="pakeg_title">
-                                        <h4>Spwan and Growth</h4>
-                                    </div>
-                                    <br>
-
-                                    <ul>
-                                        <li><h4>Step 3 - Spawning</h4></li>
-                                        <li><h4>Step 4 - Casing</h4></li>
-                                        
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="single_pakeg_three text-left wow rotateInDownRight">
-                            <div class="col-md-6 col-md-offset-6 col-sm-8 col-sm-offset-4">
-                                <div class="single_pakeg_text">
-                                    <div class="pakeg_title">
-                                        <h4>Snipping and Packing</h4>
-                                    </div>
-                                    <br>
-
-                                    <ul>
-                                        <li><h4>Step 5 - Pinning</h4></li>
-                                        <li><h4>Step 6 - Cropping</h4></li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section id="mobaileapps" class="mobailapps">
-            <div class="slider_overlay">
-                <div class="container">
-                    <div class="row">
-                        <div class="main_mobail_apps_content wow zoomIn">
-                            <div class="col-md-5 col-sm-12 text-center">
-                                <img src="assets/images/iphone.png" alt="" />
-                            </div>
-                            <div class="col-md-7 col-sm-12">
-                                <div class="single_monail_apps_text">
-                                    <h4>Happy to Announce </h4>
-                                    <h1>Mobile App <span>is Available on Google Play Store.</span></h1>
-
-                                    <a href=""><img src="assets/images/google.png" alt="" /></a>
+                                <div class="col-lg-6">
+                                        <hr>
+                                        <h2 style="color: black;">Order Summary</h2>
+                                        <hr>
+                    
+                                        <table class="table">
+                                            <thead>
+                                                <th><h5>S.no.</th></h5>
+                                                <th><h5>Item</th></h5>
+                                                <th><h5>Price</th></h5>
+                                                <th><h5>Qty</th></h5>
+                                                <th><h5>Total</th></h5>
+                                            </thead>
+                        
+                                            <% cart.products.forEach(function(item,index){%>
+                                            <tr>
+                                                <td>
+                                                    <%= index+1 %>
+                                                </td>
+                                                <td>
+                                                    <%= item.item_name %>
+                                                </td>
+                                                <td>
+                                                    &#8377;<%= item.price %>
+                                                </td>
+                                                <td>
+                                                    <%= item.qty_purchased %>
+                                                </td>
+                                                <td>
+                                                    &#8377;<%= item.price * item.qty_purchased %>
+                                                </td>
+                                            </tr>
+                                            <%})%>
+                                        </table>
+                        
+                    
+                                        <h5>Items: <%= cart.itemCount %></h5>
+                                        <% var total = 0 %>
+                                        <h5>Delivery Charges: 50</h5>
+                                        <% cart.products.forEach(item=>{total+=item.price * item.qty_purchased})%>
+                                        <h5>Total: &#8377;<%= total+50 %></h5>
+                    
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
+            </div>
         </section>
-
         <section id="footer_widget" class="footer_widget">
             <div class="container">
                 <div class="row">
@@ -330,5 +292,6 @@
         <script src="assets/js/wow/wow.min.js"></script>
         <script src="assets/js/plugins.js"></script>
         <script src="assets/js/main.js"></script>
+        
     </body>
 </html>

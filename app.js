@@ -95,16 +95,6 @@ console.log(`API live at port: ${process.env.PORT}`)
 // LOGIN START
 ////////////////
 
-app.get('/home', async (req, res) => {
-  var response = await axios.get(`${apihost}/api/products`)
-  res.render('home.ejs', { products: response.data, usercart: usercart, user: req.session.user })
-})
-
-app.get('/aboutus', (req, res) => {
-  res.render('aboutus.ejs', { message: false })
-})
-
-
 
 app.get('/signup', (req, res) => {
   if (req.session.user && req.cookies.creds)
@@ -445,24 +435,10 @@ app.get("/client-profile", checkUser,checkDetails, async (req, res) => {
   res.render('clientui/profile', { user: req.session.user, num:req.session.num, address: req.session.address, orders: response.data })
 })
 
-app.get("/shop", async (req, res) => {
-  var response = await axios.get(`${apihost}/api/products`)
-  res.render('clientui/shop', { products: response.data, usercart: usercart, user: req.session.user })
-})
-
-app.post('/cart', (req, res) => {
-  var { cart } = req.body
-  // console.log(cart)
-  usercart = cart
-  res.status(200).json({ success: true })
-})
-
-app.get("/cart", (req, res) => {
-  if(usercart.itemCount == 0)
-    res.redirect('/shop')
-  else
-    res.render('clientui/cart', { cart: usercart, user: req.session.user })
-})
+// app.get("/shop", async (req, res) => {
+//   var response = await axios.get(`${apihost}/api/products`)
+//   res.render('clientui/shop', { products: response.data, usercart: usercart, user: req.session.user })
+// })
 
 app.get('/order-details/:id', checkUser,checkDetails, async (req, res) => {
   var response = await axios.get(`${apihost}/api/orders/ord/${req.params.id}`)
@@ -472,11 +448,42 @@ app.get('/order-details/:id', checkUser,checkDetails, async (req, res) => {
     res.send('Not authorised to view this order')
 })
 
+app.get('/update-profile', checkUser, (req, res) => {
+  res.render('clientui/edit_profile', { user: req.session.user, num:req.session.num, address: req.session.address, message: false })
+})
+
+app.get('/home', async (req, res) => {
+  var response = await axios.get(`${apihost}/api/products`)
+  res.render('home.ejs', { products: response.data, user: req.session.user })
+})
+
+app.get('/aboutus', (req, res) => {
+  res.render('aboutus.ejs', {user: req.session.user })
+})
+
+app.get('/shop', async (req, res) => {
+  var response = await axios.get(`${apihost}/api/products`)
+  res.render('shop.ejs', { products: response.data, usercart: usercart, user: req.session.user })
+})
+
+app.get("/cart", (req, res) => {
+  if(usercart.itemCount == 0)
+    res.redirect('/shop')
+  else
+    res.render('cart', { cart: usercart, user: req.session.user })
+})
+
+app.post('/cart', (req, res) => {
+  var { cart } = req.body
+  usercart = cart
+  res.status(200).json({ success: true })
+})
+
 app.get("/checkout", checkUser,checkDetails, (req, res) => {
   if(usercart.itemCount == 0)
     res.redirect('/shop')
   else
-    res.render('clientui/checkout', { user: req.session.user, num:req.session.num, cart: usercart, address: req.session.address })
+    res.render('checkout', { user: req.session.user, num:req.session.num, cart: usercart, address: req.session.address })
 })
 
 app.post("/checkout", checkUser,checkDetails, async (req, res) => {
@@ -486,9 +493,7 @@ app.post("/checkout", checkUser,checkDetails, async (req, res) => {
   res.redirect('/client-profile')
 })
 
-app.get('/update-profile', checkUser, (req, res) => {
-  res.render('clientui/edit_profile', { user: req.session.user, num:req.session.num, address: req.session.address, message: false })
-})
+
 
 ////////////////////////
 //CLIENT END
@@ -496,7 +501,11 @@ app.get('/update-profile', checkUser, (req, res) => {
 
 
 app.get("/", (req, res) => {
-  res.redirect('/shop')
+  res.redirect('/home')
+})
+
+app.use((req, res) => {
+  res.redirect('/home')
 })
 
 var port = process.env.PORT || 3000
