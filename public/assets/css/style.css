@@ -646,10 +646,12 @@ a.navbar-brand.our_logo{
 
 .navbar-default .navbar-nav>li>a {
     color: #fff;
+    background-color: transparent;
 }
 
-.navbar-default .navbar-nav>li>a:hover, .navbar-default .navbar-nav>li>a:focus{
-	color: #da9b31;
+.navbar-default .navbar-nav>li>a:hover, .navbar-nav>li>a::after, .navbar-default .navbar-nav>li>a:focus{
+    color: #da9b31;
+    background-color: #000;
 }
 
 /* slider section */

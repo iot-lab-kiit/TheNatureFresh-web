@@ -37,6 +37,7 @@
                 #headerName {
                     font-size: 3.5rem;
                 }
+
             }
         </style>
     </head>
@@ -67,13 +68,12 @@
                                 </div>
 
                                 <!-- Collect the nav links, forms, and other content for toggling -->
-                                <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                                <div class="collapse navbar-collapse"  id="bs-example-navbar-collapse-1">
 
                                     <ul class="nav navbar-nav navbar-right">
                                         <li><a href="#slider">Home</a></li>
                                         <li><a href="/aboutus">About Us</a></li>
                                         <li><a href="/shop">Shop</a></li>
-                                        
                                 <% if(user){%>
                                         <li >
                                         <% if(user.photoURL!=null){%>
@@ -112,7 +112,7 @@
                                 <div class="main_slider_content wow zoomIn" data-wow-duration="1s">
                                     <h1 id="headerName">The Nature<br> Mushroom</h1>
                                     <p class="wow zoomIn"><h4>We grow mushrooms by hands so we can say 100% for quality.</h4></We></p>
-                                    <button href="" class="btn-lg">Shop Now</button>
+                                    <button href="/shop" class="btn-lg">Shop Now</button>
                                 </div>
                             </div>	
                         </div>
