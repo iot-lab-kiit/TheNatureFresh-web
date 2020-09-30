@@ -62,11 +62,11 @@ If you find any bugs, please create an issue. We will work towards resolving it 
 
 ## 🏁 Live Preview
 
-Follow the instruction as written in **CONTRIBUTING.md** and submit the PR.
+Follow the instructions as written in **CONTRIBUTING.md** and submit the PR.
 
 Sit back and wait until we approve your PR, ofc, if it fits the instructions.
 
-**Check out if your changes shows up at**
+**Check out if your changes show up at**
 
 **[The Nature Fresh Mushroom](https://thenaturefreshmushroom.herokuapp.com/)**
 
