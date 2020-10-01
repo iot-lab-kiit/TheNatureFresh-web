@@ -211,65 +211,11 @@
     <div class='preloader'>
         <div class='loaded'>&nbsp;</div>
     </div>
-    <header id="home" class="navbar-fixed-top">
-
-
-        <!-- End navbar-collapse-->
-
-
-        <div class="main_menu_bg">
-            <div class="container">
-                <div class="row">
-                    <nav class="navbar navbar-default">
-                        <div class="container-fluid">
-                            <!-- Brand and toggle get grouped for better mobile display -->
-                            <div class="navbar-header">
-                                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
-                                    <span class="sr-only">Toggle navigation</span>
-                                    <span class="icon-bar"></span>
-                                    <span class="icon-bar"></span>
-                                    <span class="icon-bar"></span>
-                                </button>
-                                <a class="navbar-brand" href="#"><img src="images/logo.png" alt="" width="80" height="80" /></a>
-                            </div>
-
-                            <!-- Collect the nav links, forms, and other content for toggling -->
-                            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-
-                                <ul class="nav navbar-nav navbar-right">
-                                    <li><a href="/home">Home</a></li>
-                                    <li><a href="/aboutus">About Us</a></li>
-                                    <li><a href="/shop">Shop</a></li>
-
-                                    <% if(user){%>
-                                        <li>
-                                            <% if(user.photoURL!=null){%>
-                                                <img src="<%= user.photoURL %>" alt="User Image" style="width: 50px; height: 50px; object-fit: cover; object-position: top; border-radius: 5rem;">
-                                                <% } else {%>
-                                                    <img src="/images/profile.webp" alt="User Image" width="20">
-                                                    <% }%>
-                                        </li>
-                                        <li>
-                                            <a href='/client-profile'>
-                                                <%= user.displayName %>
-                                            </a>
-                                        </li>
-                                        <li><a href="/logout" class="booking">Logout</i></a></li>
-                                        <% } else {%>
-                                            <li><a href="/signin" class="booking">LOGIN</a></li>
-                                            <% }%>
-
-                                </ul>
-                            </div>
-                            <!-- /.navbar-collapse -->
-                        </div>
-                        <!-- /.container-fluid -->
-                    </nav>
-                </div>
-            </div>
-        </div>
-    </header>
+     
+    <!-- Start of Header Section -->
+    <%- include("partials/header") %>        
     <!-- End Header Section -->
+
     <section id="slider" class="slider">
         <div class="slider_overlay">
             <div class="container">
@@ -410,87 +356,8 @@
             </li>
         </ul>
     </section>
-
-    <section id="footer_widget" class="footer_widget">
-        <div class="container">
-            <div class="row">
-                <div class="footer_widget_content text-center">
-                    <div class="col-md-4">
-                        <div class="single_widget wow fadeIn" data-wow-duration="2s">
-                            <h3>Our Location</h3>
-
-                            <div class="single_widget_info">
-                                <p>Shop-42069, Dank Street
-
-                                    <span>Bokaro</span>
-                                    <span>Jharkhand</span>
-                                    <span class="phone_email">phone: +91 921 142 0101</span>
-                                    <span>Email: support@thenaturemushroom.com</span></p>
-                            </div>
-
-                            <div class="footer_socail_icon">
-                                <a href="https://www.facebook.com/iot.lab.kiit" target="_blank"><i
-                                        class="fab fa-facebook"></i></a>
-                                <a href="https://twitter.com/iotlabkiit" target="_blank"><i
-                                        class="fab fa-twitter"></i></a>
-                                <a href="https://www.linkedin.com/company/iotkiit/" target="_blank"><i
-                                        class="fab fa-linkedin"></i></a>
-                                <a href="https://www.instagram.com/iotkiit/" target="_blank"><i
-                                        class="fab fa-instagram"></i></a>
-                                <a href="https://t.me/iotkiit" target="_blank"><i class="fab fa-telegram"></i></a>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-md-4">
-                        <div class="single_widget wow fadeIn" data-wow-duration="4s">
-                            <h3>Our Working Hours</h3>
-
-                            <div class="single_widget_info">
-                                <p><span class="date_day">Monday To Friday</span>
-                                    <span>10:00am to 6:00pm</span>
-
-                                    <span class="date_day">Saturday & Sunday</span>
-                                    <span>Weekend Off</span>
-
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-md-4">
-                        <div class="single_widget wow fadeIn" data-wow-duration="5s">
-                            <h3>Have a doubt? Contact Us</h3>
-
-                            <div class="single_widget_form text-left">
-                                <form action="#" id="formid">
-                                    <div class="form-group">
-                                        <input type="text" class="form-control" name="name" placeholder="Name" required="">
-                                    </div>
-
-                                    <div class="form-group">
-                                        <input type="email" class="form-control" name="email" placeholder="Email" required="">
-                                    </div>
-
-                                    <div class="form-group">
-                                        <input type="text" class="form-control" placeholder="Subject">
-                                    </div>
-                                    <!-- end of form-group -->
-
-                                    <div class="form-group">
-                                        <textarea class="form-control" name="message" rows="3" placeholder="Message"></textarea>
-                                    </div>
-
-                                    <input type="submit" value="click here" class="btn btn-primary">
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-
+    <!--Footer-Widget-->
+    <%- include("partials/footer_widget") %> 
 
     <!--Footer-->
     <%- include('footer'); -%>
