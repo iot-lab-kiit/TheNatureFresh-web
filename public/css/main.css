@@ -1,3 +1,7 @@
+:root{
+    --dark-color: #212121;
+}
+
 .box-element{
 	box-shadow:hsl(0, 0%, 80%) 0 0 16px;
 	background-color: #fff;
@@ -87,3 +91,15 @@
 .hidden{
 	display: none!important;
 }
+
+@media (prefers-color-scheme: dark){
+    body{
+        background: var(--dark-color);
+        color: #fff;
+    }
+    input,
+  input:active {
+    background: var(--dark-color);
+    border-color: #fff;
+    color: #fff;
+  }
