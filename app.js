@@ -1,4 +1,5 @@
 require('dotenv').config()
+var url = require('url');
 var admin = require("firebase-admin")
 var express = require("express")
 var bodyParser = require("body-parser")
@@ -67,14 +68,14 @@ const checkAdmin = (req, res, next) => {
 }
 
 const checkUser = (req, res, next) => {
-  if (req.session.role == "user" && req.cookies.creds && req.session.user )
+  if (req.session.role == "user" && req.cookies.creds && req.session.user)
     next()
   else res.redirect('/reroute')
 }
 
 const checkDetails = (req, res, next) => {
-  if (req.session.address!=null && req.session.num!=null)
-   next()
+  if (req.session.address != null && req.session.num != null)
+    next()
   else res.redirect('/update-profile')
 }
 
@@ -147,7 +148,7 @@ app.post("/signup", upload, async (req, res) => {
         uid: user.uid,
         role: urole,
         address: uaddress,
-        phone_number:phoneNumber
+        phone_number: phoneNumber
       })
       res.redirect('/signin')
     })
@@ -238,7 +239,7 @@ app.get('/updateStatus/:id/:status', checkAdmin, async (req, res) => {
 
 app.get("/allOrders", checkAdmin, async (req, res) => {
   var response = await axios.get(`${apihost}/api/orders/`)
-  res.render('adminui/listUserOrders', { user: req.session.user, num:req.session.num, orders: response.data })
+  res.render('adminui/listUserOrders', { user: req.session.user, num: req.session.num, orders: response.data })
 })
 
 app.post("/create-item", checkAdmin, upload, async (req, res) => {
@@ -271,7 +272,7 @@ app.post("/create-item", checkAdmin, upload, async (req, res) => {
 app.get("/edit-item/:id", checkAdmin, async (req, res) => {
   var response = await axios.get(`${apihost}/api/products/details/${req.params.id}`)
   // console.log(response.data)
-  res.render('adminui/edit_item', { user: req.session.user, num:req.session.num, product: response.data })
+  res.render('adminui/edit_item', { user: req.session.user, num: req.session.num, product: response.data })
 })
 
 app.post("/edit-item/", checkAdmin, async (req, res) => {
@@ -299,17 +300,17 @@ app.get("/users", checkAdmin, async (req, res) => {
     var single = userRecord.toJSON()
     users.push(single)
   })
-  res.render('adminui/users', { user: req.session.user, num:req.session.num, list: users })
+  res.render('adminui/users', { user: req.session.user, num: req.session.num, list: users })
 })
 
 app.get("/userOrders/:id", checkAdmin, async (req, res) => {
   var response = await axios.get(`${apihost}/api/orders/${req.params.id}`)
-  res.render('adminui/listUserOrders', { user: req.session.user, num:req.session.num, orders: response.data })
+  res.render('adminui/listUserOrders', { user: req.session.user, num: req.session.num, orders: response.data })
 })
 
 app.get('/admin-order-details/:id', checkAdmin, async (req, res) => {
   var response = await axios.get(`${apihost}/api/orders/ord/${req.params.id}`)
-  res.render('adminui/order_detail', { user: req.session.user, num:req.session.num, orders: response.data })
+  res.render('adminui/order_detail', { user: req.session.user, num: req.session.num, orders: response.data })
 })
 
 app.get("/profile", (req, res) => {
@@ -330,7 +331,7 @@ var usercart = {
   itemCount: 0
 }
 
-const clearCart = () =>{
+const clearCart = () => {
   usercart = {
     products: [],
     itemCount: 0
@@ -388,16 +389,16 @@ const createOrder = (cart, add, del_chrgs, req) => {
   return (order)
 }
 
-app.get("/client-profile", checkUser,checkDetails, async (req, res) => {
+app.get("/client-profile", checkUser, checkDetails, async (req, res) => {
   clearCart()
   var response = await axios.get(`${apihost}/api/orders/${req.session.user.uid}`)
-  res.render('client-profile', { user: req.session.user, num:req.session.num, address: req.session.address, orders: response.data })
+  res.render('client-profile', { user: req.session.user, num: req.session.num, address: req.session.address, orders: response.data })
 })
 
-app.get('/order-details/:id', checkUser,checkDetails, async (req, res) => {
+app.get('/order-details/:id', checkUser, checkDetails, async (req, res) => {
   var response = await axios.get(`${apihost}/api/orders/ord/${req.params.id}`)
   if (response.data.user_id == req.session.user.uid)
-    res.render('order-details', { user: req.session.user, num:req.session.num, orders: response.data })
+    res.render('order-details', { user: req.session.user, num: req.session.num, orders: response.data })
   else
     res.redirect('/client-profile')
 })
@@ -405,7 +406,7 @@ app.get('/order-details/:id', checkUser,checkDetails, async (req, res) => {
 
 
 app.get('/edit-profile', checkUser, (req, res) => {
-  res.render('edit-profile', { user: req.session.user, num:req.session.num, address: req.session.address, message: false })
+  res.render('edit-profile', { user: req.session.user, num: req.session.num, address: req.session.address, message: false })
 })
 
 app.post('/updateDetails', checkUser, async (req, res) => {
@@ -431,7 +432,7 @@ app.post('/updateDetails', checkUser, async (req, res) => {
     }
   } catch (error) {
     console.log(error)
-    res.render('edit-profile', { user: req.session.user, num:req.session.num, address: req.session.address, message: error.message })
+    res.render('edit-profile', { user: req.session.user, num: req.session.num, address: req.session.address, message: error.message })
   }
 
   try {
@@ -445,10 +446,10 @@ app.post('/updateDetails', checkUser, async (req, res) => {
     req.session.address = address
   } catch (error) {
     console.log(error)
-    res.render('edit-profile', { user: req.session.user, num:req.session.num, address: req.session.address, message: error.message })
+    res.render('edit-profile', { user: req.session.user, num: req.session.num, address: req.session.address, message: error.message })
 
   }
-  res.render('edit-profile', { user: req.session.user, num:req.session.num, address: req.session.address, message: 'Sucessfully Updated' })
+  res.render('edit-profile', { user: req.session.user, num: req.session.num, address: req.session.address, message: 'Sucessfully Updated' })
 })
 
 app.get('/home', async (req, res) => {
@@ -457,7 +458,7 @@ app.get('/home', async (req, res) => {
 })
 
 app.get('/aboutus', (req, res) => {
-  res.render('aboutus.ejs', {user: req.session.user })
+  res.render('aboutus.ejs', { user: req.session.user })
 })
 
 app.get('/shop', async (req, res) => {
@@ -466,7 +467,7 @@ app.get('/shop', async (req, res) => {
 })
 
 app.get("/cart", (req, res) => {
-  if(usercart.itemCount == 0)
+  if (usercart.itemCount == 0)
     res.redirect('/shop')
   else
     res.render('cart', { cart: usercart, user: req.session.user })
@@ -478,14 +479,14 @@ app.post('/cart', (req, res) => {
   res.status(200).json({ success: true })
 })
 
-app.get("/checkout", checkUser,checkDetails, (req, res) => {
-  if(usercart.itemCount == 0)
+app.get("/checkout", checkUser, checkDetails, (req, res) => {
+  if (usercart.itemCount == 0)
     res.redirect('/shop')
   else
-    res.render('checkout', { user: req.session.user, num:req.session.num, cart: usercart, address: req.session.address })
+    res.render('checkout', { user: req.session.user, num: req.session.num, cart: usercart, address: req.session.address })
 })
 
-app.post("/checkout", checkUser,checkDetails, async (req, res) => {
+app.post("/checkout", checkUser, checkDetails, async (req, res) => {
   const { address } = req.body
   var order = createOrder(usercart, address, 50, req)
   var apires = await axios.post(`${apihost}/api/orders/create`, order)
@@ -509,5 +510,5 @@ app.use((req, res) => {
 
 var port = process.env.PORT || 3000
 app.listen(port, () => {
-    console.log(`Server live at port: ${port}`)
+  console.log(`Server live at port: ${port}`)
 })
