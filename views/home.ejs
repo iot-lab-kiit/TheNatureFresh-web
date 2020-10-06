@@ -19,7 +19,9 @@
     <link href='https://fonts.googleapis.com/css?family=Pacifico' rel='stylesheet' type='text/css'>
 
     <!-- Fontawesome 5.14.0 -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/all.min.css" integrity="sha512-1PKOgIY59xJ8Co8+NE6FZ+LOAZKjy+KY8iq0G4B3CyeY6wYHN3yt9PW0XpSriVlkMXe40PTKnXrLnZ9+fkDaog==" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/all.min.css"
+        integrity="sha512-1PKOgIY59xJ8Co8+NE6FZ+LOAZKjy+KY8iq0G4B3CyeY6wYHN3yt9PW0XpSriVlkMXe40PTKnXrLnZ9+fkDaog=="
+        crossorigin="anonymous" />
 
     <!--For Plugins external css-->
     <link rel="stylesheet" href="assets/css/animate/animate.css" />
@@ -39,7 +41,7 @@
         #headerName {
             font-size: 4.5rem;
         }
-        
+
         @media screen and (max-width: 600px) {
             #headerName {
                 font-size: 3.5rem;
@@ -69,8 +71,8 @@
                             <div class="main_slider_content wow zoomIn" data-wow-duration="1s">
                                 <h1 id="headerName">The Nature<br> Mushroom</h1>
                                 <p class="wow zoomIn">
-                                    <h4>We grow mushrooms by hands so we can say 100% for quality.</h4>
-                                    </We>
+                                <h4>We grow mushrooms by hands so we can say 100% for quality.</h4>
+                                </We>
                                 </p>
                                 <a href="/shop" class="btn-lg">Shop Now</a>
                             </div>
@@ -94,19 +96,19 @@
                         <div class="main_portfolio_content">
 
                             <% products.forEach((product,index) => { %>
-                                <div class="col-md-3 col-sm-4 col-xs-10 single_portfolio_text">
-                                    <img src="<%= product.image_url %>" alt="" class="thumbnail" style="margin: 2rem; width: 300px;
+                            <div class="col-md-3 col-sm-4 col-xs-10 single_portfolio_text">
+                                <img src="<%= product.image_url %>" alt="" class="thumbnail" style="margin: 2rem; width: 300px;
                                     height: 260px;
                                     object-fit: cover;" />
-                                    <div class="portfolio_images_overlay text-center" style="margin-left: 1rem; margin-top:0.3rem; ">
-                                        <h6>
-                                            <%= product.item_name %>
-                                        </h6>
-                                        <p class="product_price">&#8377;
-                                            <%= product.price%>
-                                        </p>
-                                        <a href="/shop" class="btn btn-primary">Buy Now</a>
-                                    </div>
+                                <div class="portfolio_images_overlay text-center"
+                                    style="margin-left: 1rem; margin-top:0.3rem; ">
+                                    <h6>
+                                        <%= product.item_name %>
+                                    </h6>
+                                    <p class="product_price">&#8377;
+                                        <%= product.price%>
+                                    </p>
+                                    <a href="/shop" class="btn btn-primary">Buy Now</a>
                                 </div>
                                 <% })%>
                         </div>
@@ -303,12 +305,12 @@
     </section>
 
     <!--Footer-Widget-->
-    <%- include("partials/footer_widget") %> 
+    <%- include("partials/footer_widget") %>
 
 
 
     <!--Footer-->
-    <%- include('footer'); -%>
+    <%- include('footer'); %>
 
     <div class="scrollup">
         <a href="#"><i class="fa fa-chevron-up"></i></a>
@@ -323,6 +325,8 @@
     <script src="assets/js/plugins.js"></script>
     <script src="assets/js/main.js"></script>
     <script src="assets/js/fontawesome.min.js"></script>
+
+    <script type="text/javascript" src="assets/js/contactFormHandler.js"></script>
 </body>
 
 </html>
